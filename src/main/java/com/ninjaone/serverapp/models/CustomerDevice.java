@@ -79,7 +79,10 @@ public class CustomerDevice {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, customerId, systemName, deviceType);
+        return Objects.hash(id,
+                customerId,
+                systemName,
+                deviceType);
     }
 
     @Override

@@ -11,7 +11,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "SERVICE_COST")
-public class ServiceCost {
+public class DeviceService {
 
     @Id
     @GeneratedValue
@@ -21,11 +21,12 @@ public class ServiceCost {
     private ServiceDeviceType serviceDeviceType;
     private BigDecimal servicePrice;
 
-    public ServiceCost() {
+    public DeviceService() {
     }
 
-    public ServiceCost(String serviceName, ServiceDeviceType serviceDeviceType,
-                       BigDecimal servicePrice) {
+    public DeviceService(String serviceName,
+                         ServiceDeviceType serviceDeviceType,
+                         BigDecimal servicePrice) {
         this.serviceName = serviceName;
         this.serviceDeviceType = serviceDeviceType;
         this.servicePrice = servicePrice;
@@ -69,19 +70,22 @@ public class ServiceCost {
             return true;
         }
 
-        if (!(o instanceof ServiceCost serviceCost)) {
+        if (!(o instanceof DeviceService deviceService)) {
             return false;
         }
 
-        return Objects.equals(id, serviceCost.id)
-                && Objects.equals(serviceName, serviceCost.serviceName)
-                && Objects.equals(serviceDeviceType, serviceCost.serviceDeviceType)
-                && Objects.equals(servicePrice, serviceCost.servicePrice);
+        return Objects.equals(id, deviceService.id)
+                && Objects.equals(serviceName, deviceService.serviceName)
+                && Objects.equals(serviceDeviceType, deviceService.serviceDeviceType)
+                && Objects.equals(servicePrice, deviceService.servicePrice);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, serviceName, serviceDeviceType, servicePrice);
+        return Objects.hash(id,
+                serviceName,
+                serviceDeviceType,
+                servicePrice);
     }
 
     @Override

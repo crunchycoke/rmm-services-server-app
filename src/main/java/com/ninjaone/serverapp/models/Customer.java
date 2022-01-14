@@ -100,7 +100,12 @@ public class Customer {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, middleName, lastName, username, password);
+        return Objects.hash(id,
+                firstName,
+                middleName,
+                lastName,
+                username,
+                password);
     }
 
     @Override

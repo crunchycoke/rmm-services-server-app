@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
 public class DeviceServiceNotFoundAdvice {
-    
+
     @ResponseBody
     @ExceptionHandler(DeviceServiceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    String employeeNotFoundHandler(DeviceServiceNotFoundException ex) {
+    String deviceServiceNotFoundHandler(DeviceServiceNotFoundException ex) {
         return ex.getMessage();
     }
 }

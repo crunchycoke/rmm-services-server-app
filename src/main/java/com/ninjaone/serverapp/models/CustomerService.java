@@ -15,13 +15,15 @@ public class CustomerService {
     private Long id;
 
     private Long customerId;
+    private Long deviceId;
     private Long serviceId;
 
     public CustomerService() {
     }
 
-    public CustomerService(Long customerId, Long serviceId) {
+    public CustomerService(Long customerId, Long deviceId, Long serviceId) {
         this.customerId = customerId;
+        this.deviceId = deviceId;
         this.serviceId = serviceId;
     }
 
@@ -39,6 +41,14 @@ public class CustomerService {
 
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
+    }
+
+    public Long getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(Long deviceId) {
+        this.deviceId = deviceId;
     }
 
     public Long getServiceId() {
@@ -61,12 +71,16 @@ public class CustomerService {
 
         return Objects.equals(id, customerService.id)
                 && Objects.equals(customerId, customerService.customerId)
+                && Objects.equals(deviceId, customerService.deviceId)
                 && Objects.equals(serviceId, customerService.serviceId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, customerId, serviceId);
+        return Objects.hash(id,
+                customerId,
+                deviceId,
+                serviceId);
     }
 
     @Override
@@ -74,6 +88,7 @@ public class CustomerService {
         return "CustomerService{" +
                 "id=" + id +
                 ", customerId=" + customerId +
+                ", deviceId=" + deviceId +
                 ", serviceId=" + serviceId +
                 '}';
     }
