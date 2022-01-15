@@ -10,12 +10,14 @@ import java.util.Objects;
 public class Customer {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String firstName;
     private String middleName;
     private String lastName;
+
+    @Column(unique = true)
     private String username;
     private String password;
 

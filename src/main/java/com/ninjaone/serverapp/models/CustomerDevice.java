@@ -11,9 +11,10 @@ import java.util.Objects;
 public class CustomerDevice {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String systemName;
     private DeviceType deviceType;
 

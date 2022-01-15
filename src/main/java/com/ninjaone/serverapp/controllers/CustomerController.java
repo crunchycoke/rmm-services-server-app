@@ -1,6 +1,7 @@
 package com.ninjaone.serverapp.controllers;
 
 import com.ninjaone.serverapp.exceptions.CustomerNotFoundException;
+import com.ninjaone.serverapp.exceptions.EntryCannotBeAddedException;
 import com.ninjaone.serverapp.modelassemblers.CustomerModelAssembler;
 import com.ninjaone.serverapp.models.Customer;
 import com.ninjaone.serverapp.repository.CustomerRepository;
@@ -57,11 +58,15 @@ public class CustomerController {
     public ResponseEntity<?> addCustomer(@RequestBody Customer newCustomer) {
         log.info("Attempting to add customer " + newCustomer);
 
-        EntityModel<Customer> customerEntityModel =
-                customerAssembler.toModel(customerRepository.save(newCustomer));
+        try {
+            EntityModel<Customer> customerEntityModel =
+                    customerAssembler.toModel(customerRepository.save(newCustomer));
 
-        return ResponseEntity.created(customerEntityModel
-                        .getRequiredLink(IanaLinkRelations.SELF).toUri())
-                .body(customerEntityModel);
+            return ResponseEntity.created(customerEntityModel
+                            .getRequiredLink(IanaLinkRelations.SELF).toUri())
+                    .body(customerEntityModel);
+        } catch (Exception ex) {
+            throw new EntryCannotBeAddedException(newCustomer, ex);
+        }
     }
 }

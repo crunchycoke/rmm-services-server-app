@@ -1,6 +1,7 @@
 package com.ninjaone.serverapp.controllers;
 
 import com.ninjaone.serverapp.exceptions.CustomerServiceNotFoundException;
+import com.ninjaone.serverapp.exceptions.EntryCannotBeAddedException;
 import com.ninjaone.serverapp.modelassemblers.CustomerServiceModelAssembler;
 import com.ninjaone.serverapp.models.CustomerService;
 import com.ninjaone.serverapp.repository.CustomerServiceRepository;
@@ -45,7 +46,20 @@ public class CustomerServiceController {
                 .getAllCustomerServices()).withSelfRel());
     }
 
-    @GetMapping("/customers/services/{id}")
+    @GetMapping("/customers/{customerId}services")
+    public CollectionModel<EntityModel<CustomerService>> getCustomerServicesByCustomerId() {
+        log.info("Attempting to get all customer services.");
+
+        List<EntityModel<CustomerService>> customerServices =
+                customerServiceRepository.findAll().stream()
+                        .map(customerServiceAssembler::toModel)
+                        .collect(Collectors.toList());
+
+        return CollectionModel.of(customerServices, linkTo(methodOn(CustomerServiceController.class)
+                .getAllCustomerServices()).withSelfRel());
+    }
+
+    @GetMapping("/customers/{customerId}/services/{id}")
     public EntityModel<CustomerService> getCustomerServicesById(@PathVariable Long id) {
         log.info("Attempting to get customer service " + id);
 
@@ -60,12 +74,16 @@ public class CustomerServiceController {
                                                 @PathVariable Long customerId) {
         log.info("Attempting to add customer service " + newCustomerService);
 
-        EntityModel<CustomerService> customerServiceEntityModel =
-                customerServiceAssembler.toModel(customerServiceRepository.save(newCustomerService));
+        try {
+            EntityModel<CustomerService> customerServiceEntityModel =
+                    customerServiceAssembler.toModel(customerServiceRepository.save(newCustomerService));
 
-        return ResponseEntity.created(customerServiceEntityModel
-                        .getRequiredLink(IanaLinkRelations.SELF).toUri())
-                .body(customerServiceEntityModel);
+            return ResponseEntity.created(customerServiceEntityModel
+                            .getRequiredLink(IanaLinkRelations.SELF).toUri())
+                    .body(customerServiceEntityModel);
+        } catch (Exception ex) {
+            throw new EntryCannotBeAddedException(newCustomerService, ex);
+        }
     }
 
     @DeleteMapping("/customers/{customerId}/services/{id}")

@@ -2,6 +2,7 @@ package com.ninjaone.serverapp.controllers;
 
 import com.ninjaone.serverapp.exceptions.CustomerDeviceNotFoundException;
 import com.ninjaone.serverapp.exceptions.CustomerNotFoundException;
+import com.ninjaone.serverapp.exceptions.EntryCannotBeAddedException;
 import com.ninjaone.serverapp.modelassemblers.CustomerDeviceModelAssembler;
 import com.ninjaone.serverapp.models.Customer;
 import com.ninjaone.serverapp.models.CustomerDevice;
@@ -82,46 +83,58 @@ public class CustomerDeviceController {
                                                @PathVariable Long customerId) {
         log.info("Attempting to add customer device " + newCustomerDevice);
 
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new CustomerNotFoundException(customerId));
-        newCustomerDevice.setCustomer(customer);
+        try {
+            Customer customer = customerRepository.findById(customerId)
+                    .orElseThrow(() -> new CustomerNotFoundException(customerId));
+            newCustomerDevice.setCustomer(customer);
 
-        EntityModel<CustomerDevice> customerDeviceEntityModel =
-                customerDeviceAssembler.toModel(customerDeviceRepository.save(newCustomerDevice));
+            EntityModel<CustomerDevice> customerDeviceEntityModel =
+                    customerDeviceAssembler.toModel(customerDeviceRepository.save(newCustomerDevice));
 
-        return ResponseEntity.created(customerDeviceEntityModel
-                        .getRequiredLink(IanaLinkRelations.SELF).toUri())
-                .body(customerDeviceEntityModel);
+            return ResponseEntity.created(customerDeviceEntityModel
+                            .getRequiredLink(IanaLinkRelations.SELF).toUri())
+                    .body(customerDeviceEntityModel);
+        } catch (Exception ex) {
+            throw new EntryCannotBeAddedException(newCustomerDevice, ex);
+        }
     }
 
     @PutMapping("/customers/{customerId}/devices/{id}")
     public ResponseEntity<?> replaceCustomerDevice(@RequestBody CustomerDevice newCustomerDevice,
                                                    @PathVariable Long customerId,
                                                    @PathVariable Long id) {
-        log.info("Attempting to add customer device " + newCustomerDevice);
+        log.info("Attempting to replace customer device " + newCustomerDevice);
 
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new CustomerNotFoundException(customerId));
-        newCustomerDevice.setCustomer(customer);
+        try {
+            Customer customer = customerRepository.findById(customerId)
+                    .orElseThrow(() -> new CustomerNotFoundException(customerId));
+            newCustomerDevice.setCustomer(customer);
 
-        CustomerDevice updatedCustomerDevice = customerDeviceRepository.getCustomerDeviceById(id, customerId)
-                .map(customerDevice -> {
-                    customerDevice.setDeviceType(newCustomerDevice.getDeviceType());
-                    customerDevice.setSystemName(newCustomerDevice.getSystemName());
+            CustomerDevice updatedCustomerDevice = customerDeviceRepository.getCustomerDeviceById(id, customerId)
+                    .map(customerDevice -> {
+                        customerDevice.setDeviceType(newCustomerDevice.getDeviceType());
+                        customerDevice.setSystemName(newCustomerDevice.getSystemName());
 
-                    log.info("Attempting to add customer device.");
+                        log.info("Attempting to replace customer device.");
 
-                    return customerDeviceRepository.save(customerDevice);
-                })
-                .orElseGet(() -> {
-                    newCustomerDevice.setId(id);
-                    return customerDeviceRepository.save(newCustomerDevice);
-                });
+                        return customerDeviceRepository.save(customerDevice);
+                    })
+                    .orElseGet(() -> {
+                        newCustomerDevice.setId(id);
 
-        EntityModel<CustomerDevice> customerDeviceEntityModel = customerDeviceAssembler.toModel(updatedCustomerDevice);
-        return ResponseEntity.created(customerDeviceEntityModel
-                .getRequiredLink(IanaLinkRelations.SELF)
-                .toUri()).body(customerDeviceEntityModel);
+                        log.info("Attempting to added customer device.");
+
+                        return customerDeviceRepository.save(newCustomerDevice);
+                    });
+
+            EntityModel<CustomerDevice> customerDeviceEntityModel = customerDeviceAssembler.toModel(updatedCustomerDevice);
+
+            return ResponseEntity.created(customerDeviceEntityModel
+                    .getRequiredLink(IanaLinkRelations.SELF)
+                    .toUri()).body(customerDeviceEntityModel);
+        } catch (Exception ex) {
+            throw new EntryCannotBeAddedException(newCustomerDevice, ex);
+        }
     }
 
     @DeleteMapping("/customers/{customerId}/devices/{id}")
