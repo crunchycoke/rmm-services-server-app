@@ -25,12 +25,22 @@ public interface CustomerDeviceRepository extends JpaRepository<CustomerDevice, 
     Optional<CustomerDevice> getCustomerDeviceById(@Param("id") Long id,
                                                    @Param("customerId") Long customerId);
 
+    // Insert device tied to specific customer
+    @Transactional
+    @Modifying
+    @Query(value = "insert into CUSTOMER_DEVICE (id, system_name, device_type, customer_id) " +
+            "values (:id, :system_name, :device_type, :customer_id)", nativeQuery = true)
+    int insertNewCustomerDevice(@Param("id") Long id,
+                                @Param("system_name") String systemName,
+                                @Param("device_type") Integer deviceType,
+                                @Param("customer_id") Long customerId);
+
     // Delete device tied to specific customer
     @Transactional
     @Modifying
     @Query("delete from CustomerDevice device " +
             "where device.id = :id " +
             "and device.customer.id = :customerId")
-    int deleteByDeviceId(@Param("id") Long id,
-                         @Param("customerId") Long customerId);
+    int deleteByCustomerDeviceId(@Param("id") Long id,
+                                 @Param("customerId") Long customerId);
 }

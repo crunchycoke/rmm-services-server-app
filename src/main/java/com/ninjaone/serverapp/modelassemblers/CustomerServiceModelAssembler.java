@@ -16,7 +16,7 @@ public class CustomerServiceModelAssembler implements RepresentationModelAssembl
     public EntityModel<CustomerService> toModel(CustomerService customerService) {
         return EntityModel.of(customerService,
                 linkTo(methodOn(CustomerServiceController.class)
-                        .getCustomerServicesById(customerService.getId())).withSelfRel(),
+                        .getCustomerServiceById(customerService.getCustomer().getId(), customerService.getId())).withSelfRel(),
                 linkTo(methodOn(CustomerServiceController.class)
                         .getAllCustomerServices()).withRel("customerServices"));
     }
