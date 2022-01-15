@@ -1,11 +1,9 @@
 package com.ninjaone.serverapp.models;
 
-import com.ninjaone.serverapp.enums.ServiceDeviceType;
+import com.ninjaone.serverapp.enums.DeviceOperatingSystem;
+import com.ninjaone.serverapp.enums.ServiceType;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -14,20 +12,24 @@ import java.util.Objects;
 public class ServiceCost {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String serviceName;
-    private ServiceDeviceType serviceDeviceType;
+    private ServiceType serviceType;
+    private DeviceOperatingSystem deviceOperatingSystem;
     private BigDecimal servicePrice;
 
     public ServiceCost() {
     }
 
-    public ServiceCost(String serviceName, ServiceDeviceType serviceDeviceType,
+    public ServiceCost(String serviceName,
+                       ServiceType serviceType,
+                       DeviceOperatingSystem deviceOperatingSystem,
                        BigDecimal servicePrice) {
         this.serviceName = serviceName;
-        this.serviceDeviceType = serviceDeviceType;
+        this.serviceType = serviceType;
+        this.deviceOperatingSystem = deviceOperatingSystem;
         this.servicePrice = servicePrice;
     }
 
@@ -47,12 +49,20 @@ public class ServiceCost {
         this.serviceName = serviceName;
     }
 
-    public ServiceDeviceType getServiceDeviceType() {
-        return serviceDeviceType;
+    public ServiceType getServiceType() {
+        return serviceType;
     }
 
-    public void setServiceDeviceType(ServiceDeviceType serviceDeviceType) {
-        this.serviceDeviceType = serviceDeviceType;
+    public void setServiceType(ServiceType serviceType) {
+        this.serviceType = serviceType;
+    }
+
+    public DeviceOperatingSystem getDeviceOperatingSystem() {
+        return deviceOperatingSystem;
+    }
+
+    public void setDeviceOperatingSystem(DeviceOperatingSystem deviceOperatingSystem) {
+        this.deviceOperatingSystem = deviceOperatingSystem;
     }
 
     public BigDecimal getServicePrice() {
@@ -75,13 +85,18 @@ public class ServiceCost {
 
         return Objects.equals(id, serviceCost.id)
                 && Objects.equals(serviceName, serviceCost.serviceName)
-                && Objects.equals(serviceDeviceType, serviceCost.serviceDeviceType)
+                && Objects.equals(serviceType, serviceCost.serviceType)
+                && Objects.equals(deviceOperatingSystem, serviceCost.deviceOperatingSystem)
                 && Objects.equals(servicePrice, serviceCost.servicePrice);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, serviceName, serviceDeviceType, servicePrice);
+        return Objects.hash(id,
+                serviceName,
+                serviceType,
+                deviceOperatingSystem,
+                servicePrice);
     }
 
     @Override
@@ -89,7 +104,8 @@ public class ServiceCost {
         return "ServiceCost{" +
                 "id=" + id +
                 ", serviceName='" + serviceName + '\'' +
-                ", serviceDeviceType='" + serviceDeviceType + '\'' +
+                ", serviceType='" + serviceType + '\'' +
+                ", serviceDeviceType='" + deviceOperatingSystem + '\'' +
                 ", serviceCost=" + servicePrice +
                 '}';
     }

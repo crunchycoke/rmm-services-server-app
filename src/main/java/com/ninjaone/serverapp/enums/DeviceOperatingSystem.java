@@ -1,7 +1,7 @@
 package com.ninjaone.serverapp.enums;
 
-public enum ServiceDeviceType {
+public enum DeviceOperatingSystem {
     WINDOWS,
     MAC,
-    BOTH
+    ALL
 }
