@@ -12,7 +12,7 @@ public class EntryCannotBeAddedAdvice {
 
     @ResponseBody
     @ExceptionHandler(EntryCannotBeAddedException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.CONFLICT)
     String customerDeviceNotFoundHandler(EntryCannotBeAddedException ex) {
         return ex.getMessage();
     }

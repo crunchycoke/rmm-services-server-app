@@ -11,7 +11,6 @@ import java.util.Objects;
 public class CustomerDevice {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String systemName;
@@ -25,7 +24,8 @@ public class CustomerDevice {
     public CustomerDevice() {
     }
 
-    public CustomerDevice(String systemName, DeviceType deviceType, Customer customer) {
+    public CustomerDevice(Long id, String systemName, DeviceType deviceType, Customer customer) {
+        this.id = id;
         this.systemName = systemName;
         this.deviceType = deviceType;
         this.customer = customer;

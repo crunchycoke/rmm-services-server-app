@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -85,19 +86,34 @@ public class CustomerDeviceController {
                                                @PathVariable Long customerId) {
         log.info("Attempting to add customer device " + newCustomerDevice);
 
-        try {
-            Customer customer = customerRepository.findById(customerId)
-                    .orElseThrow(() -> new CustomerNotFoundException(customerId));
-            newCustomerDevice.setCustomer(customer);
+        Optional<CustomerDevice> customerDevice =
+                customerDeviceRepository.getCustomerDeviceById(newCustomerDevice.getId(), customerId);
 
-            EntityModel<CustomerDevice> customerDeviceEntityModel =
-                    customerDeviceAssembler.toModel(customerDeviceRepository.save(newCustomerDevice));
+        if (customerDevice.isPresent()) {
+            throw new EntryCannotBeAddedException(newCustomerDevice);
+        } else {
+            var createdCustomerServices = customerDeviceRepository
+                    .insertNewCustomerDevice(newCustomerDevice.getId(),
+                            newCustomerDevice.getSystemName(),
+                            newCustomerDevice.getDeviceType().ordinal(),
+                            customerId);
 
-            return ResponseEntity.created(customerDeviceEntityModel
-                            .getRequiredLink(IanaLinkRelations.SELF).toUri())
-                    .body(customerDeviceEntityModel);
-        } catch (Exception ex) {
-            throw new EntryCannotBeAddedException(newCustomerDevice, ex);
+            if (createdCustomerServices == 1) {
+                Optional<CustomerDevice> updateCustomerDevice = customerDeviceRepository
+                        .getCustomerDeviceById(newCustomerDevice.getId(), customerId);
+
+                if (updateCustomerDevice.isPresent()) {
+                    EntityModel<CustomerDevice> customerDeviceEntityModel = customerDeviceAssembler.toModel(updateCustomerDevice.get());
+
+                    return ResponseEntity.created(customerDeviceEntityModel
+                                    .getRequiredLink(IanaLinkRelations.SELF).toUri())
+                            .body(customerDeviceEntityModel);
+                } else {
+                    return ResponseEntity.unprocessableEntity().build();
+                }
+            } else {
+                return ResponseEntity.badRequest().build();
+            }
         }
     }
 

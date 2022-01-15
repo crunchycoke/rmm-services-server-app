@@ -55,6 +55,16 @@ public class CustomerController {
         return customerAssembler.toModel(customer);
     }
 
+    @GetMapping("/customers/{id}/billing")
+    public EntityModel<Customer> getCustomerBillingById(@PathVariable Long id) {
+        log.info("Attempting to get customer " + id + " billing info");
+
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new CustomerNotFoundException(id));
+
+        return customerAssembler.toModel(customer);
+    }
+
     @PostMapping("/customers")
     public ResponseEntity<?> addCustomer(@RequestBody Customer newCustomer) {
         log.info("Attempting to add customer " + newCustomer);

@@ -15,7 +15,6 @@ public class CustomerService {
     private Long id;
 
     private String serviceName;
-
     private ServiceType serviceType;
 
     @ManyToOne

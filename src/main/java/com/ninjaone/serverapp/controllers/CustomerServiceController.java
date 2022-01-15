@@ -1,11 +1,9 @@
 package com.ninjaone.serverapp.controllers;
 
 import com.ninjaone.serverapp.enums.ServiceType;
-import com.ninjaone.serverapp.exceptions.CustomerNotFoundException;
 import com.ninjaone.serverapp.exceptions.CustomerServiceNotFoundException;
 import com.ninjaone.serverapp.exceptions.EntryCannotBeAddedException;
 import com.ninjaone.serverapp.modelassemblers.CustomerServiceModelAssembler;
-import com.ninjaone.serverapp.models.Customer;
 import com.ninjaone.serverapp.models.CustomerService;
 import com.ninjaone.serverapp.repository.CustomerRepository;
 import com.ninjaone.serverapp.repository.CustomerServiceRepository;
@@ -18,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -86,28 +85,40 @@ public class CustomerServiceController {
                                                 @PathVariable Long customerId) {
         log.info("Attempting to add customer service " + newCustomerService);
 
-        try {
-            Customer customer = customerRepository.findById(customerId)
-                    .orElseThrow(() -> new CustomerNotFoundException(customerId));
-            newCustomerService.setCustomer(customer);
+        Optional<CustomerService> customerService =
+                customerServiceRepository.getCustomerServiceByName(newCustomerService.getServiceType(), customerId);
 
-            EntityModel<CustomerService> customerServiceEntityModel =
-                    customerServiceAssembler.toModel(customerServiceRepository.save(newCustomerService));
+        if (customerService.isPresent()) {
+            throw new EntryCannotBeAddedException(newCustomerService);
+        } else {
+            var createdCustomerServices = customerServiceRepository
+                    .insertNewCustomerService(newCustomerService.getServiceName(), newCustomerService.getServiceType().ordinal(), customerId);
 
-            return ResponseEntity.created(customerServiceEntityModel
-                            .getRequiredLink(IanaLinkRelations.SELF).toUri())
-                    .body(customerServiceEntityModel);
-        } catch (Exception ex) {
-            throw new EntryCannotBeAddedException(newCustomerService, ex);
+            if (createdCustomerServices == 1) {
+                Optional<CustomerService> updateCustomerService = customerServiceRepository
+                        .getCustomerServiceByName(newCustomerService.getServiceType(), customerId);
+
+                if (updateCustomerService.isPresent()) {
+                    EntityModel<CustomerService> customerServiceEntityModel = customerServiceAssembler.toModel(updateCustomerService.get());
+
+                    return ResponseEntity.created(customerServiceEntityModel
+                                    .getRequiredLink(IanaLinkRelations.SELF).toUri())
+                            .body(customerServiceEntityModel);
+                } else {
+                    return ResponseEntity.unprocessableEntity().build();
+                }
+            } else {
+                return ResponseEntity.badRequest().build();
+            }
         }
     }
 
-    @DeleteMapping("/customers/{customerId}/services/{id}")
+    @DeleteMapping("/customers/{customerId}/services/{serviceType}")
     public ResponseEntity<?> deleteCustomerService(@PathVariable Long customerId,
                                                    @PathVariable ServiceType serviceType) {
         log.info("Attempting to delete customer " + customerId + " service " + serviceType);
 
-        int deletedCustomerServices = customerServiceRepository.deleteByCustomerServiceId(serviceType, customerId);
+        int deletedCustomerServices = customerServiceRepository.deleteByCustomerServiceType(serviceType, customerId);
 
         if (deletedCustomerServices == 1) {
             return ResponseEntity.ok().build();

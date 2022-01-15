@@ -26,12 +26,28 @@ public interface CustomerServiceRepository extends JpaRepository<CustomerService
     Optional<CustomerService> getCustomerServiceById(@Param("id") Long id,
                                                      @Param("customerId") Long customerId);
 
+    // Get specific service from customer
+    @Query("select service " +
+            "from CustomerService service " +
+            "where service.serviceType = :serviceType and service.customer.id = :customerId")
+    Optional<CustomerService> getCustomerServiceByName(@Param("serviceType") ServiceType serviceType,
+                                                       @Param("customerId") Long customerId);
+
+    // Insert service tied to specific customer
+    @Transactional
+    @Modifying
+    @Query(value = "insert into CUSTOMER_SERVICE (service_name, service_type, customer_id) " +
+            "values (:service_name, :service_type, :customer_id)", nativeQuery = true)
+    int insertNewCustomerService(@Param("service_name") String serviceName,
+                                 @Param("service_type") Integer serviceType,
+                                 @Param("customer_id") Long customerId);
+
     // Delete service tied to specific customer
     @Transactional
     @Modifying
     @Query("delete from CustomerService service " +
             "where service.serviceType = :serviceType " +
             "and service.customer.id = :customerId")
-    int deleteByCustomerServiceId(@Param("serviceType") ServiceType serviceType,
-                                  @Param("customerId") Long customerId);
+    int deleteByCustomerServiceType(@Param("serviceType") ServiceType serviceType,
+                                    @Param("customerId") Long customerId);
 }

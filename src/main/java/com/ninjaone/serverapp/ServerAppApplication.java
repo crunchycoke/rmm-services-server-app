@@ -26,9 +26,9 @@ public class ServerAppApplication {
 		CustomerRepository customerRepository = configurableApplicationContext.getBean(CustomerRepository.class);
 
 		Customer customer = new Customer("Test", "Cust", "Omer", "admin", "password");
-		CustomerDevice macBookPro = new CustomerDevice("My MacBook Pro", DeviceType.MAC, customer);
-		CustomerDevice windowsServer = new CustomerDevice("Windows Server 123", DeviceType.WINDOWS_SERVER, customer);
-		CustomerDevice windowsLaptop = new CustomerDevice("Windows Laptop", DeviceType.WINDOWS_WORKSTATION, customer);
+		CustomerDevice macBookPro = new CustomerDevice(10000L, "My MacBook Pro", DeviceType.MAC, customer);
+		CustomerDevice windowsServer = new CustomerDevice(10001L, "Windows Server 123", DeviceType.WINDOWS_SERVER, customer);
+		CustomerDevice windowsLaptop = new CustomerDevice(10002L, "Windows Laptop", DeviceType.WINDOWS_WORKSTATION, customer);
 
 		List<CustomerDevice> customerDevices = Arrays.asList(macBookPro, windowsServer, windowsLaptop);
 		customer.setCustomerDevices(customerDevices);
