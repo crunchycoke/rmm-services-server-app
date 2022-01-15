@@ -33,19 +33,19 @@ public class CustomerController {
 
     @GetMapping("/customers")
     public CollectionModel<EntityModel<Customer>> getAllCustomers() {
-        log.debug("Attempting to get all customers.");
+        log.info("Attempting to get all customers.");
 
         List<EntityModel<Customer>> customers = customerRepository.findAll().stream()
                 .map(customerAssembler::toModel)
                 .collect(Collectors.toList());
 
-        return CollectionModel.of(customers, linkTo(methodOn(CustomerController.class)
-                .getAllCustomers()).withSelfRel());
+        return CollectionModel.of(customers,
+                linkTo(methodOn(CustomerController.class).getAllCustomers()).withSelfRel());
     }
 
     @GetMapping("/customers/{id}")
     public EntityModel<Customer> getCustomerById(@PathVariable Long id) {
-        log.debug("Attempting to get customer " + id);
+        log.info("Attempting to get customer " + id);
 
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new CustomerNotFoundException(id));
@@ -55,7 +55,7 @@ public class CustomerController {
 
     @PostMapping("/customers")
     public ResponseEntity<?> addCustomer(@RequestBody Customer newCustomer) {
-        log.debug("Attempting to add customer " + newCustomer);
+        log.info("Attempting to add customer " + newCustomer);
 
         EntityModel<Customer> customerEntityModel =
                 customerAssembler.toModel(customerRepository.save(newCustomer));

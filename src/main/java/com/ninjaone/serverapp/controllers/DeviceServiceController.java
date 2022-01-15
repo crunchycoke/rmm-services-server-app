@@ -2,13 +2,14 @@ package com.ninjaone.serverapp.controllers;
 
 import com.ninjaone.serverapp.exceptions.DeviceServiceNotFoundException;
 import com.ninjaone.serverapp.modelassemblers.DeviceServiceModelAssembler;
-import com.ninjaone.serverapp.models.DeviceService;
+import com.ninjaone.serverapp.models.ServiceCost;
 import com.ninjaone.serverapp.repository.DeviceServiceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -32,10 +33,10 @@ public class DeviceServiceController {
     }
 
     @GetMapping("/services")
-    public CollectionModel<EntityModel<DeviceService>> getAllDeviceServices() {
-        log.debug("Attempting to get all device services.");
+    public CollectionModel<EntityModel<ServiceCost>> getAllDeviceServices() {
+        log.info("Attempting to get all device services.");
 
-        List<EntityModel<DeviceService>> deviceServices =
+        List<EntityModel<ServiceCost>> deviceServices =
                 deviceServiceRepository.findAll().stream()
                         .map(deviceServiceModelAssembler::toModel)
                         .collect(Collectors.toList());
@@ -44,12 +45,13 @@ public class DeviceServiceController {
                 .getAllDeviceServices()).withSelfRel());
     }
 
-    public EntityModel<DeviceService> getDeviceServicesById(Long id) {
-        log.debug("Attempting to get device service " + id);
+    @GetMapping("/services/{id}")
+    public EntityModel<ServiceCost> getDeviceServicesById(@PathVariable Long id) {
+        log.info("Attempting to get device service " + id);
 
-        DeviceService deviceService = deviceServiceRepository.findById(id)
+        ServiceCost serviceCost = deviceServiceRepository.findById(id)
                 .orElseThrow(() -> new DeviceServiceNotFoundException(id));
 
-        return deviceServiceModelAssembler.toModel(deviceService);
+        return deviceServiceModelAssembler.toModel(serviceCost);
     }
 }

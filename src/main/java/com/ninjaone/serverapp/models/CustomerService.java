@@ -1,9 +1,9 @@
 package com.ninjaone.serverapp.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ninjaone.serverapp.enums.ServiceType;
+
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
@@ -11,20 +11,24 @@ import java.util.Objects;
 public class CustomerService {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private Long customerId;
-    private Long deviceId;
-    private Long serviceId;
+    private String serviceName;
+    private ServiceType serviceType;
+
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    @JsonIgnore
+    private Customer customer;
 
     public CustomerService() {
     }
 
-    public CustomerService(Long customerId, Long deviceId, Long serviceId) {
-        this.customerId = customerId;
-        this.deviceId = deviceId;
-        this.serviceId = serviceId;
+    public CustomerService(String serviceName, ServiceType serviceType, Customer customer) {
+        this.serviceName = serviceName;
+        this.serviceType = serviceType;
+        this.customer = customer;
     }
 
     public Long getId() {
@@ -35,28 +39,28 @@ public class CustomerService {
         this.id = id;
     }
 
-    public Long getCustomerId() {
-        return customerId;
+    public String getServiceName() {
+        return serviceName;
     }
 
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
     }
 
-    public Long getDeviceId() {
-        return deviceId;
+    public ServiceType getServiceType() {
+        return serviceType;
     }
 
-    public void setDeviceId(Long deviceId) {
-        this.deviceId = deviceId;
+    public void setServiceType(ServiceType serviceType) {
+        this.serviceType = serviceType;
     }
 
-    public Long getServiceId() {
-        return serviceId;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setServiceId(Long serviceId) {
-        this.serviceId = serviceId;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     @Override
@@ -70,26 +74,26 @@ public class CustomerService {
         }
 
         return Objects.equals(id, customerService.id)
-                && Objects.equals(customerId, customerService.customerId)
-                && Objects.equals(deviceId, customerService.deviceId)
-                && Objects.equals(serviceId, customerService.serviceId);
+                && Objects.equals(serviceName, customerService.serviceName)
+                && Objects.equals(serviceType, customerService.serviceType)
+                && Objects.equals(customer, customerService.customer);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id,
-                customerId,
-                deviceId,
-                serviceId);
+                serviceName,
+                serviceType,
+                customer);
     }
 
     @Override
     public String toString() {
         return "CustomerService{" +
                 "id=" + id +
-                ", customerId=" + customerId +
-                ", deviceId=" + deviceId +
-                ", serviceId=" + serviceId +
+                ", serviceName=" + serviceName +
+                ", serviceType=" + serviceType +
+                ", customer=" + customer +
                 '}';
     }
 }

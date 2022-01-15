@@ -31,9 +31,9 @@ public class CustomerDeviceController {
         this.customerDeviceAssembler = customerDeviceAssembler;
     }
 
-    @GetMapping("/customers/{customerId}/devices")
-    public CollectionModel<EntityModel<CustomerDevice>> getAllCustomerDevices(@PathVariable Long customerId) {
-        log.debug("Attempting to get all customer devices.");
+    @GetMapping("/customers/devices")
+    public CollectionModel<EntityModel<CustomerDevice>> getAllCustomerDevices() {
+        log.info("Attempting to get all customer devices.");
 
         List<EntityModel<CustomerDevice>> customerDevices =
                 customerDeviceRepository.findAll().stream()
@@ -41,13 +41,12 @@ public class CustomerDeviceController {
                         .collect(Collectors.toList());
 
         return CollectionModel.of(customerDevices, linkTo(methodOn(CustomerDeviceController.class)
-                .getAllCustomerDevices(customerId)).withSelfRel());
+                .getAllCustomerDevices()).withSelfRel());
     }
 
-    @GetMapping("/customers/{customerId}/devices/{id}")
-    public EntityModel<CustomerDevice> getCustomerDeviceById(@PathVariable Long customerId,
-                                                             @PathVariable Long id) {
-        log.debug("Attempting to get customer device " + id);
+    @GetMapping("/customers/devices/{id}")
+    public EntityModel<CustomerDevice> getCustomerDeviceById(@PathVariable Long id) {
+        log.info("Attempting to get customer device " + id);
 
         CustomerDevice customerDevice = customerDeviceRepository.findById(id)
                 .orElseThrow(() -> new CustomerDeviceNotFoundException(id));
@@ -58,7 +57,7 @@ public class CustomerDeviceController {
     @PostMapping("/customers/{customerId}/devices")
     public ResponseEntity<?> addCustomerDevice(@RequestBody CustomerDevice newCustomerDevice,
                                                @PathVariable Long customerId) {
-        log.debug("Attempting to add customer device " + newCustomerDevice);
+        log.info("Attempting to add customer device " + newCustomerDevice);
 
         EntityModel<CustomerDevice> customerDeviceEntityModel =
                 customerDeviceAssembler.toModel(customerDeviceRepository.save(newCustomerDevice));

@@ -1,11 +1,9 @@
 package com.ninjaone.serverapp.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ninjaone.serverapp.enums.DeviceType;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
@@ -13,20 +11,24 @@ import java.util.Objects;
 public class CustomerDevice {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private Long customerId;
     private String systemName;
     private DeviceType deviceType;
+
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    @JsonIgnore
+    private Customer customer;
 
     public CustomerDevice() {
     }
 
-    public CustomerDevice(Long customerId, String systemName, DeviceType deviceType) {
-        this.customerId = customerId;
+    public CustomerDevice(String systemName, DeviceType deviceType, Customer customer) {
         this.systemName = systemName;
         this.deviceType = deviceType;
+        this.customer = customer;
     }
 
     public Long getId() {
@@ -35,14 +37,6 @@ public class CustomerDevice {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
     }
 
     public String getSystemName() {
@@ -61,6 +55,14 @@ public class CustomerDevice {
         this.deviceType = deviceType;
     }
 
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -72,26 +74,26 @@ public class CustomerDevice {
         }
 
         return Objects.equals(id, customerDevice.id)
-                && Objects.equals(customerId, customerDevice.customerId)
                 && Objects.equals(systemName, customerDevice.systemName)
-                && deviceType == customerDevice.deviceType;
+                && deviceType == customerDevice.deviceType
+                && Objects.equals(customer, customerDevice.customer);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id,
-                customerId,
                 systemName,
-                deviceType);
+                deviceType,
+                customer);
     }
 
     @Override
     public String toString() {
         return "CustomerDevice{" +
                 "id=" + id +
-                ", customerId=" + customerId +
                 ", systemName='" + systemName + '\'' +
                 ", deviceType=" + deviceType +
+                ", customer=" + customer +
                 '}';
     }
 }

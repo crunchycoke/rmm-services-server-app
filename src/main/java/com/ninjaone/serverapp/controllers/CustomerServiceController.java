@@ -32,9 +32,9 @@ public class CustomerServiceController {
         this.customerServiceAssembler = customerServiceAssembler;
     }
 
-    @GetMapping("/customers/{customerId}/services")
-    public CollectionModel<EntityModel<CustomerService>> getAllCustomerServices(@PathVariable Long customerId) {
-        log.debug("Attempting to get all customer services.");
+    @GetMapping("/customers/services")
+    public CollectionModel<EntityModel<CustomerService>> getAllCustomerServices() {
+        log.info("Attempting to get all customer services.");
 
         List<EntityModel<CustomerService>> customerServices =
                 customerServiceRepository.findAll().stream()
@@ -42,13 +42,12 @@ public class CustomerServiceController {
                         .collect(Collectors.toList());
 
         return CollectionModel.of(customerServices, linkTo(methodOn(CustomerServiceController.class)
-                .getAllCustomerServices(customerId)).withSelfRel());
+                .getAllCustomerServices()).withSelfRel());
     }
 
-    @GetMapping("/customers/{customerId}/services/{id}")
-    public EntityModel<CustomerService> getCustomerServicesById(@PathVariable Long customerId,
-                                                                @PathVariable Long id) {
-        log.debug("Attempting to get customer service " + id);
+    @GetMapping("/customers/services/{id}")
+    public EntityModel<CustomerService> getCustomerServicesById(@PathVariable Long id) {
+        log.info("Attempting to get customer service " + id);
 
         CustomerService customerService = customerServiceRepository.findById(id)
                 .orElseThrow(() -> new CustomerServiceNotFoundException(id));
@@ -59,7 +58,7 @@ public class CustomerServiceController {
     @PostMapping("/customers/{customerId}/services")
     public ResponseEntity<?> addCustomerService(@RequestBody CustomerService newCustomerService,
                                                 @PathVariable Long customerId) {
-        log.debug("Attempting to add customer service " + newCustomerService);
+        log.info("Attempting to add customer service " + newCustomerService);
 
         EntityModel<CustomerService> customerServiceEntityModel =
                 customerServiceAssembler.toModel(customerServiceRepository.save(newCustomerService));

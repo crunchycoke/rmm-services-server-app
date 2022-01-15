@@ -1,9 +1,8 @@
 package com.ninjaone.serverapp.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -11,7 +10,7 @@ import java.util.Objects;
 public class Customer {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String firstName;
@@ -19,6 +18,20 @@ public class Customer {
     private String lastName;
     private String username;
     private String password;
+
+    @OneToMany(
+            mappedBy = "customer",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<CustomerDevice> customerDevices = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "customer",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<CustomerService> customerServices = new ArrayList<>();
 
     public Customer() {
     }
@@ -80,6 +93,22 @@ public class Customer {
         this.password = password;
     }
 
+    public List<CustomerDevice> getCustomerDevices() {
+        return customerDevices;
+    }
+
+    public void setCustomerDevices(List<CustomerDevice> customerDevices) {
+        this.customerDevices = customerDevices;
+    }
+
+    public List<CustomerService> getCustomerServices() {
+        return customerServices;
+    }
+
+    public void setCustomerServices(List<CustomerService> customerServices) {
+        this.customerServices = customerServices;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -95,7 +124,9 @@ public class Customer {
                 && Objects.equals(middleName, customer.middleName)
                 && Objects.equals(lastName, customer.lastName)
                 && Objects.equals(username, customer.username)
-                && Objects.equals(password, customer.password);
+                && Objects.equals(password, customer.password)
+                && Objects.equals(customerDevices, customer.customerDevices)
+                && Objects.equals(customerServices, customer.customerServices);
     }
 
     @Override
@@ -105,7 +136,9 @@ public class Customer {
                 middleName,
                 lastName,
                 username,
-                password);
+                password,
+                customerDevices,
+                customerServices);
     }
 
     @Override

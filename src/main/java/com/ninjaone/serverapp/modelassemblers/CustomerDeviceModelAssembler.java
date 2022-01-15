@@ -16,8 +16,8 @@ public class CustomerDeviceModelAssembler implements RepresentationModelAssemble
     public EntityModel<CustomerDevice> toModel(CustomerDevice customerDevice) {
         return EntityModel.of(customerDevice,
                 linkTo(methodOn(CustomerDeviceController.class)
-                        .getCustomerDeviceById(customerDevice.getCustomerId(), customerDevice.getId())).withSelfRel(),
+                        .getCustomerDeviceById(customerDevice.getId())).withSelfRel(),
                 linkTo(methodOn(CustomerDeviceController.class)
-                        .getAllCustomerDevices(customerDevice.getCustomerId())).withRel("customerDevices"));
+                        .getAllCustomerDevices()).withRel("customerDevices"));
     }
 }
