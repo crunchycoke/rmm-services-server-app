@@ -31,6 +31,6 @@ public interface CustomerDeviceRepository extends JpaRepository<CustomerDevice, 
     @Query("delete from CustomerDevice device " +
             "where device.id = :id " +
             "and device.customer.id = :customerId")
-    int deleteByDeviceId(@Param("id") Long id,
-                         @Param("customerId") Long customerId);
+    int deleteByCustomerDeviceId(@Param("id") Long id,
+                                 @Param("customerId") Long customerId);
 }

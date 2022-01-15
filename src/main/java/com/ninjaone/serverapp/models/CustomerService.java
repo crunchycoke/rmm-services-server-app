@@ -16,7 +16,6 @@ public class CustomerService {
 
     private String serviceName;
 
-    @Column(unique = true)
     private ServiceType serviceType;
 
     @ManyToOne

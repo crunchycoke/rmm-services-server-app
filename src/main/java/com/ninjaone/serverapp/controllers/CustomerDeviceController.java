@@ -31,7 +31,9 @@ public class CustomerDeviceController {
     private final CustomerDeviceRepository customerDeviceRepository;
     private final CustomerDeviceModelAssembler customerDeviceAssembler;
 
-    public CustomerDeviceController(CustomerRepository customerRepository, CustomerDeviceRepository customerDeviceRepository, CustomerDeviceModelAssembler customerDeviceAssembler) {
+    public CustomerDeviceController(CustomerRepository customerRepository,
+                                    CustomerDeviceRepository customerDeviceRepository,
+                                    CustomerDeviceModelAssembler customerDeviceAssembler) {
         this.customerRepository = customerRepository;
         this.customerDeviceRepository = customerDeviceRepository;
         this.customerDeviceAssembler = customerDeviceAssembler;
@@ -142,7 +144,7 @@ public class CustomerDeviceController {
                                                   @PathVariable Long id) {
         log.info("Attempting to delete customer " + customerId + " device " + id);
 
-        int deletedCustomerDevices = customerDeviceRepository.deleteByDeviceId(id, customerId);
+        int deletedCustomerDevices = customerDeviceRepository.deleteByCustomerDeviceId(id, customerId);
 
         if (deletedCustomerDevices == 1) {
             return ResponseEntity.ok().build();

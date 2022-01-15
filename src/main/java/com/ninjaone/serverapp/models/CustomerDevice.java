@@ -14,7 +14,6 @@ public class CustomerDevice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
     private String systemName;
     private DeviceType deviceType;
 

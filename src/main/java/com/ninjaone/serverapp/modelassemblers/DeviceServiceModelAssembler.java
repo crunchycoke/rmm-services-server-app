@@ -16,7 +16,7 @@ public class DeviceServiceModelAssembler implements RepresentationModelAssembler
     public EntityModel<ServiceCost> toModel(ServiceCost serviceCost) {
         return EntityModel.of(serviceCost,
                 linkTo(methodOn(DeviceServiceController.class)
-                        .getDeviceServicesById(serviceCost.getId())).withSelfRel(),
+                        .getDeviceServiceById(serviceCost.getId())).withSelfRel(),
                 linkTo(methodOn(DeviceServiceController.class)
                         .getAllDeviceServices()).withRel("deviceServices"));
     }

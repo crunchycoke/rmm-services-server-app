@@ -27,7 +27,8 @@ public class CustomerController {
     private final CustomerRepository customerRepository;
     private final CustomerModelAssembler customerAssembler;
 
-    public CustomerController(CustomerRepository customerRepository, CustomerModelAssembler customerAssembler) {
+    public CustomerController(CustomerRepository customerRepository,
+                              CustomerModelAssembler customerAssembler) {
         this.customerRepository = customerRepository;
         this.customerAssembler = customerAssembler;
     }

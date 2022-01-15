@@ -46,7 +46,7 @@ public class DeviceServiceController {
     }
 
     @GetMapping("/services/{id}")
-    public EntityModel<ServiceCost> getDeviceServicesById(@PathVariable Long id) {
+    public EntityModel<ServiceCost> getDeviceServiceById(@PathVariable Long id) {
         log.info("Attempting to get device service " + id);
 
         ServiceCost serviceCost = deviceServiceRepository.findById(id)

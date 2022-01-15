@@ -1,9 +1,13 @@
 package com.ninjaone.serverapp.controllers;
 
+import com.ninjaone.serverapp.enums.ServiceType;
+import com.ninjaone.serverapp.exceptions.CustomerNotFoundException;
 import com.ninjaone.serverapp.exceptions.CustomerServiceNotFoundException;
 import com.ninjaone.serverapp.exceptions.EntryCannotBeAddedException;
 import com.ninjaone.serverapp.modelassemblers.CustomerServiceModelAssembler;
+import com.ninjaone.serverapp.models.Customer;
 import com.ninjaone.serverapp.models.CustomerService;
+import com.ninjaone.serverapp.repository.CustomerRepository;
 import com.ninjaone.serverapp.repository.CustomerServiceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,11 +28,14 @@ public class CustomerServiceController {
 
     private static final Logger log = LoggerFactory.getLogger(CustomerServiceController.class);
 
+    private final CustomerRepository customerRepository;
     private final CustomerServiceRepository customerServiceRepository;
     private final CustomerServiceModelAssembler customerServiceAssembler;
 
-    public CustomerServiceController(CustomerServiceRepository customerServiceRepository,
+    public CustomerServiceController(CustomerRepository customerRepository,
+                                     CustomerServiceRepository customerServiceRepository,
                                      CustomerServiceModelAssembler customerServiceAssembler) {
+        this.customerRepository = customerRepository;
         this.customerServiceRepository = customerServiceRepository;
         this.customerServiceAssembler = customerServiceAssembler;
     }
@@ -46,24 +53,29 @@ public class CustomerServiceController {
                 .getAllCustomerServices()).withSelfRel());
     }
 
-    @GetMapping("/customers/{customerId}services")
-    public CollectionModel<EntityModel<CustomerService>> getCustomerServicesByCustomerId() {
-        log.info("Attempting to get all customer services.");
+    @GetMapping("/customers/{customerId}/services")
+    public CollectionModel<EntityModel<CustomerService>> getCustomerServiceByCustomerId(@PathVariable Long customerId) {
+        log.info("Attempting to get all customer " + customerId + " services.");
 
         List<EntityModel<CustomerService>> customerServices =
-                customerServiceRepository.findAll().stream()
+                customerServiceRepository.getCustomerServicesByCustomerId(customerId).stream()
                         .map(customerServiceAssembler::toModel)
                         .collect(Collectors.toList());
+
+        if (customerServices.isEmpty()) {
+            throw new CustomerServiceNotFoundException(customerId);
+        }
 
         return CollectionModel.of(customerServices, linkTo(methodOn(CustomerServiceController.class)
                 .getAllCustomerServices()).withSelfRel());
     }
 
     @GetMapping("/customers/{customerId}/services/{id}")
-    public EntityModel<CustomerService> getCustomerServicesById(@PathVariable Long id) {
-        log.info("Attempting to get customer service " + id);
+    public EntityModel<CustomerService> getCustomerServiceById(@PathVariable Long customerId,
+                                                               @PathVariable Long id) {
+        log.info("Attempting to get customer " + customerId + " service " + id);
 
-        CustomerService customerService = customerServiceRepository.findById(id)
+        CustomerService customerService = customerServiceRepository.getCustomerServiceById(id, customerId)
                 .orElseThrow(() -> new CustomerServiceNotFoundException(id));
 
         return customerServiceAssembler.toModel(customerService);
@@ -75,6 +87,10 @@ public class CustomerServiceController {
         log.info("Attempting to add customer service " + newCustomerService);
 
         try {
+            Customer customer = customerRepository.findById(customerId)
+                    .orElseThrow(() -> new CustomerNotFoundException(customerId));
+            newCustomerService.setCustomer(customer);
+
             EntityModel<CustomerService> customerServiceEntityModel =
                     customerServiceAssembler.toModel(customerServiceRepository.save(newCustomerService));
 
@@ -87,9 +103,16 @@ public class CustomerServiceController {
     }
 
     @DeleteMapping("/customers/{customerId}/services/{id}")
-    public ResponseEntity<?> deleteEmployee(@PathVariable Long customerId,
-                                            @PathVariable Long id) {
-        customerServiceRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteCustomerService(@PathVariable Long customerId,
+                                                   @PathVariable ServiceType serviceType) {
+        log.info("Attempting to delete customer " + customerId + " service " + serviceType);
+
+        int deletedCustomerServices = customerServiceRepository.deleteByCustomerServiceId(serviceType, customerId);
+
+        if (deletedCustomerServices == 1) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }
