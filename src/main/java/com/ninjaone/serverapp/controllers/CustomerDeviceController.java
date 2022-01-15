@@ -1,9 +1,12 @@
 package com.ninjaone.serverapp.controllers;
 
 import com.ninjaone.serverapp.exceptions.CustomerDeviceNotFoundException;
+import com.ninjaone.serverapp.exceptions.CustomerNotFoundException;
 import com.ninjaone.serverapp.modelassemblers.CustomerDeviceModelAssembler;
+import com.ninjaone.serverapp.models.Customer;
 import com.ninjaone.serverapp.models.CustomerDevice;
 import com.ninjaone.serverapp.repository.CustomerDeviceRepository;
+import com.ninjaone.serverapp.repository.CustomerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.CollectionModel;
@@ -23,10 +26,12 @@ public class CustomerDeviceController {
 
     private static final Logger log = LoggerFactory.getLogger(CustomerDeviceController.class);
 
+    private final CustomerRepository customerRepository;
     private final CustomerDeviceRepository customerDeviceRepository;
     private final CustomerDeviceModelAssembler customerDeviceAssembler;
 
-    public CustomerDeviceController(CustomerDeviceRepository customerDeviceRepository, CustomerDeviceModelAssembler customerDeviceAssembler) {
+    public CustomerDeviceController(CustomerRepository customerRepository, CustomerDeviceRepository customerDeviceRepository, CustomerDeviceModelAssembler customerDeviceAssembler) {
+        this.customerRepository = customerRepository;
         this.customerDeviceRepository = customerDeviceRepository;
         this.customerDeviceAssembler = customerDeviceAssembler;
     }
@@ -44,11 +49,29 @@ public class CustomerDeviceController {
                 .getAllCustomerDevices()).withSelfRel());
     }
 
-    @GetMapping("/customers/devices/{id}")
-    public EntityModel<CustomerDevice> getCustomerDeviceById(@PathVariable Long id) {
-        log.info("Attempting to get customer device " + id);
+    @GetMapping("/customers/{customerId}/devices")
+    public CollectionModel<EntityModel<CustomerDevice>> getCustomerDeviceByCustomerId(@PathVariable Long customerId) {
+        log.info("Attempting to get all customer " + customerId + " devices.");
 
-        CustomerDevice customerDevice = customerDeviceRepository.findById(id)
+        List<EntityModel<CustomerDevice>> customerDevices =
+                customerDeviceRepository.getCustomerDevicesByCustomerId(customerId).stream()
+                        .map(customerDeviceAssembler::toModel)
+                        .collect(Collectors.toList());
+
+        if (customerDevices.isEmpty()) {
+            throw new CustomerDeviceNotFoundException(customerId);
+        }
+
+        return CollectionModel.of(customerDevices, linkTo(methodOn(CustomerDeviceController.class)
+                .getAllCustomerDevices()).withSelfRel());
+    }
+
+    @GetMapping("/customers/{customerId}/devices/{id}")
+    public EntityModel<CustomerDevice> getCustomerDeviceById(@PathVariable Long customerId,
+                                                             @PathVariable Long id) {
+        log.info("Attempting to get customer " + customerId + " device " + id);
+
+        CustomerDevice customerDevice = customerDeviceRepository.getCustomerDeviceById(id, customerId)
                 .orElseThrow(() -> new CustomerDeviceNotFoundException(id));
 
         return customerDeviceAssembler.toModel(customerDevice);
@@ -58,6 +81,10 @@ public class CustomerDeviceController {
     public ResponseEntity<?> addCustomerDevice(@RequestBody CustomerDevice newCustomerDevice,
                                                @PathVariable Long customerId) {
         log.info("Attempting to add customer device " + newCustomerDevice);
+
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new CustomerNotFoundException(customerId));
+        newCustomerDevice.setCustomer(customer);
 
         EntityModel<CustomerDevice> customerDeviceEntityModel =
                 customerDeviceAssembler.toModel(customerDeviceRepository.save(newCustomerDevice));
@@ -71,10 +98,19 @@ public class CustomerDeviceController {
     public ResponseEntity<?> replaceCustomerDevice(@RequestBody CustomerDevice newCustomerDevice,
                                                    @PathVariable Long customerId,
                                                    @PathVariable Long id) {
-        CustomerDevice updatedCustomerDevice = customerDeviceRepository.findById(id)
+        log.info("Attempting to add customer device " + newCustomerDevice);
+
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new CustomerNotFoundException(customerId));
+        newCustomerDevice.setCustomer(customer);
+
+        CustomerDevice updatedCustomerDevice = customerDeviceRepository.getCustomerDeviceById(id, customerId)
                 .map(customerDevice -> {
                     customerDevice.setDeviceType(newCustomerDevice.getDeviceType());
                     customerDevice.setSystemName(newCustomerDevice.getSystemName());
+
+                    log.info("Attempting to add customer device.");
+
                     return customerDeviceRepository.save(customerDevice);
                 })
                 .orElseGet(() -> {
@@ -89,9 +125,16 @@ public class CustomerDeviceController {
     }
 
     @DeleteMapping("/customers/{customerId}/devices/{id}")
-    public ResponseEntity<?> deleteEmployee(@PathVariable Long customerId,
-                                            @PathVariable Long id) {
-        customerDeviceRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteCustomerDevice(@PathVariable Long customerId,
+                                                  @PathVariable Long id) {
+        log.info("Attempting to delete customer " + customerId + " device " + id);
+
+        int deletedCustomerDevices = customerDeviceRepository.deleteByDeviceId(id, customerId);
+
+        if (deletedCustomerDevices == 1) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }
