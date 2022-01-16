@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- *
+ * Controller used for JWT authentication and user registration
  */
 @RestController
 @CrossOrigin
@@ -32,9 +32,11 @@ public class JwtAuthenticationController {
   private final JwtUserDetailsService userDetailsService;
 
   /**
-   * @param authenticationManager
-   * @param jwtTokenUtil
-   * @param userDetailsService
+   * Constructs the JWT authentication controller class.
+   *
+   * @param authenticationManager Authentication manager loaded through dependency injection.
+   * @param jwtTokenUtil          JWT token utility class loaded through dependency injection.
+   * @param userDetailsService    User detail service loaded through dependency injection.
    */
   public JwtAuthenticationController(AuthenticationManager authenticationManager,
       JwtTokenUtil jwtTokenUtil,
@@ -45,9 +47,11 @@ public class JwtAuthenticationController {
   }
 
   /**
-   * @param authenticationRequest
-   * @return
-   * @throws Exception
+   * Creates an authentication token using the authentication request object provided.
+   *
+   * @param authenticationRequest Represents the authentication request object.
+   * @return A token value.
+   * @throws Exception May be thrown if there are issues during the authentication process.
    */
   @PostMapping("/authenticate")
   public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest)
@@ -65,8 +69,10 @@ public class JwtAuthenticationController {
   }
 
   /**
-   * @param customer
-   * @return
+   * Saves a customer within the database as a registration entry.
+   *
+   * @param customer Represents the customer to be saved within the database.
+   * @return A status representing the state of the respository save.
    */
   @PostMapping("/register")
   public ResponseEntity<?> saveCustomer(@RequestBody Customer customer) {
@@ -76,9 +82,11 @@ public class JwtAuthenticationController {
   }
 
   /**
-   * @param username
-   * @param password
-   * @throws Exception
+   * Authenticates the provided username and password against the token provided.
+   *
+   * @param username Represents the username provided.
+   * @param password Represents the password provided.
+   * @throws Exception May be thrown if there are issues during the authentication process.
    */
   private void authenticate(String username, String password) throws Exception {
     log.info("Attempting to authenticate customer credentials");
