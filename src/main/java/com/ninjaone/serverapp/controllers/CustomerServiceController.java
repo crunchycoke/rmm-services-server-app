@@ -24,6 +24,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ *
+ */
 @RestController
 public class CustomerServiceController {
 
@@ -33,6 +36,12 @@ public class CustomerServiceController {
     private final CustomerRecordDetailsService customerRecordDetailsService;
     private final CustomerServiceModelAssembler customerServiceAssembler;
 
+    /**
+     *
+     * @param customerServiceRecordDetailsService
+     * @param customerRecordDetailsService
+     * @param customerServiceAssembler
+     */
     public CustomerServiceController(
         CustomerServiceRecordDetailsService customerServiceRecordDetailsService,
         CustomerRecordDetailsService customerRecordDetailsService,
@@ -42,6 +51,10 @@ public class CustomerServiceController {
         this.customerServiceAssembler = customerServiceAssembler;
     }
 
+    /**
+     *
+     * @return
+     */
     @GetMapping("/customers/services")
     public CollectionModel<EntityModel<CustomerService>> getAllCustomerServices() {
         log.info("Attempting to get all customer services.");
@@ -55,6 +68,12 @@ public class CustomerServiceController {
             .getAllCustomerServices()).withSelfRel());
     }
 
+    /**
+     *
+     * @param authentication
+     * @param customerId
+     * @return
+     */
     @GetMapping("/customers/{customerId}/services")
     public CollectionModel<EntityModel<CustomerService>> getCustomerServiceByCustomerId(
         Authentication authentication,
@@ -73,6 +92,13 @@ public class CustomerServiceController {
             .getAllCustomerServices()).withSelfRel());
     }
 
+    /**
+     *
+     * @param authentication
+     * @param customerId
+     * @param id
+     * @return
+     */
     @GetMapping("/customers/{customerId}/services/{id}")
     public EntityModel<CustomerService> getCustomerServiceById(Authentication authentication,
         @PathVariable Long customerId,
@@ -87,6 +113,13 @@ public class CustomerServiceController {
         return customerServiceAssembler.toModel(customerService);
     }
 
+    /**
+     *
+     * @param authentication
+     * @param newCustomerService
+     * @param customerId
+     * @return
+     */
     @PostMapping("/customers/{customerId}/services")
     public ResponseEntity<?> addCustomerService(Authentication authentication,
         @RequestBody CustomerService newCustomerService,
@@ -106,6 +139,13 @@ public class CustomerServiceController {
             .body(customerServiceEntityModel);
     }
 
+    /**
+     *
+     * @param authentication
+     * @param customerId
+     * @param serviceType
+     * @return
+     */
     @DeleteMapping("/customers/{customerId}/services/{serviceType}")
     public ResponseEntity<?> deleteCustomerService(Authentication authentication,
         @PathVariable Long customerId,

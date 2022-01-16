@@ -12,6 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+/**
+ *
+ */
 @Service
 public class CustomerServiceRecordDetailsService implements CustomerServiceAccessService {
 
@@ -20,10 +23,17 @@ public class CustomerServiceRecordDetailsService implements CustomerServiceAcces
 
   private final CustomerServiceRepository customerServiceRepository;
 
+  /**
+   *
+   * @param customerServiceRepository
+   */
   public CustomerServiceRecordDetailsService(CustomerServiceRepository customerServiceRepository) {
     this.customerServiceRepository = customerServiceRepository;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public List<CustomerService> getCustomerServices() {
     List<CustomerService> customerServices = customerServiceRepository.findAll();
@@ -31,6 +41,9 @@ public class CustomerServiceRecordDetailsService implements CustomerServiceAcces
     return customerServices;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public List<CustomerService> getCustomerServicesByCustomerId(Long customerId) {
     List<CustomerService> customerServices =
@@ -43,6 +56,9 @@ public class CustomerServiceRecordDetailsService implements CustomerServiceAcces
     return customerServices;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public CustomerService getCustomerServiceById(Long id, Long customerId) {
     CustomerService customerService = customerServiceRepository
@@ -52,6 +68,9 @@ public class CustomerServiceRecordDetailsService implements CustomerServiceAcces
     return customerService;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public CustomerService addCustomerService(CustomerService newCustomerService, Long customerId) {
     Optional<CustomerService> customerService =
@@ -82,6 +101,9 @@ public class CustomerServiceRecordDetailsService implements CustomerServiceAcces
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public int deleteCustomerService(ServiceType serviceType, Long customerId) {
     int deletedCustomerServices = customerServiceRepository.deleteByCustomerServiceType(serviceType,

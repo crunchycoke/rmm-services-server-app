@@ -15,6 +15,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ *
+ */
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -24,6 +27,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   private final UserDetailsService jwtUserDetailsService;
   private final JwtRequestFilter jwtRequestFilter;
 
+  /**
+   *
+   * @param jwtAuthenticationEntryPoint
+   * @param jwtUserDetailsService
+   * @param jwtRequestFilter
+   */
   public WebSecurityConfig(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
       UserDetailsService jwtUserDetailsService,
       JwtRequestFilter jwtRequestFilter) {
@@ -45,12 +54,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     return new BCryptPasswordEncoder();
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Bean
   @Override
   public AuthenticationManager authenticationManagerBean() throws Exception {
     return super.authenticationManagerBean();
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   protected void configure(HttpSecurity httpSecurity) throws Exception {
     // We don't need CSRF for this example

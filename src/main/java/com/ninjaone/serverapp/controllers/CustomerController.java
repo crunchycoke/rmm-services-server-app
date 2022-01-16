@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ *
+ */
 @RestController
 public class CustomerController {
 
@@ -26,12 +29,21 @@ public class CustomerController {
     private final CustomerRecordDetailsService customerRecordDetailsService;
     private final CustomerModelAssembler customerAssembler;
 
+    /**
+     *
+     * @param customerRecordDetailsService
+     * @param customerAssembler
+     */
     public CustomerController(CustomerRecordDetailsService customerRecordDetailsService,
         CustomerModelAssembler customerAssembler) {
         this.customerRecordDetailsService = customerRecordDetailsService;
         this.customerAssembler = customerAssembler;
     }
 
+    /**
+     *
+     * @return
+     */
     @GetMapping("/customers")
     public CollectionModel<EntityModel<Customer>> getAllCustomers() {
         log.info("Attempting to get all customers");
@@ -45,6 +57,12 @@ public class CustomerController {
             linkTo(methodOn(CustomerController.class).getAllCustomers()).withSelfRel());
     }
 
+    /**
+     *
+     * @param authentication
+     * @param id
+     * @return
+     */
     @GetMapping("/customers/{id}")
     public EntityModel<Customer> getCustomerById(Authentication authentication,
         @PathVariable Long id) {
@@ -56,6 +74,12 @@ public class CustomerController {
         return customerAssembler.toModel(customer);
     }
 
+    /**
+     *
+     * @param authentication
+     * @param id
+     * @return
+     */
     @GetMapping("/customers/{id}/billing")
     public CustomerBill getCustomerBillingById(Authentication authentication,
         @PathVariable Long id) {

@@ -7,15 +7,24 @@ import com.ninjaone.serverapp.services.interfaces.ServiceCostAccessService;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
+/**
+ *
+ */
 @Service
 public class ServiceCostRecordDetailsService implements ServiceCostAccessService {
 
   private final ServiceCostRepository serviceCostRepository;
 
+  /**
+   * @param serviceCostRepository
+   */
   public ServiceCostRecordDetailsService(ServiceCostRepository serviceCostRepository) {
     this.serviceCostRepository = serviceCostRepository;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public List<ServiceCost> getServiceCosts() {
     List<ServiceCost> serviceCosts = serviceCostRepository.findAll();
@@ -23,6 +32,9 @@ public class ServiceCostRecordDetailsService implements ServiceCostAccessService
     return serviceCosts;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public ServiceCost getServiceCost(Long id) {
     ServiceCost serviceCost = serviceCostRepository.findById(id)

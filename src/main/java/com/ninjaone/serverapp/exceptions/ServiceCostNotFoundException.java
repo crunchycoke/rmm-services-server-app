@@ -2,6 +2,9 @@ package com.ninjaone.serverapp.exceptions;
 
 import com.ninjaone.serverapp.enums.ServiceType;
 
+/**
+ *
+ */
 public class ServiceCostNotFoundException extends RuntimeException {
 
     public ServiceCostNotFoundException(Long id) {

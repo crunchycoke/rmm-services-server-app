@@ -18,6 +18,9 @@ import java.util.List;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+/**
+ *
+ */
 @Service
 public class CustomerRecordDetailsService implements CustomerAccessService {
 
@@ -26,6 +29,13 @@ public class CustomerRecordDetailsService implements CustomerAccessService {
   private final CustomerServiceRepository customerServiceRepository;
   private final ServiceCostRepository serviceCostRepository;
 
+  /**
+   *
+   * @param customerRepository
+   * @param customerDeviceRepository
+   * @param customerServiceRepository
+   * @param serviceCostRepository
+   */
   public CustomerRecordDetailsService(CustomerRepository customerRepository,
       CustomerDeviceRepository customerDeviceRepository,
       CustomerServiceRepository customerServiceRepository,
@@ -36,6 +46,9 @@ public class CustomerRecordDetailsService implements CustomerAccessService {
     this.serviceCostRepository = serviceCostRepository;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public List<Customer> getCustomers() {
     List<Customer> customers = customerRepository.findAll();
@@ -43,6 +56,11 @@ public class CustomerRecordDetailsService implements CustomerAccessService {
     return customers;
   }
 
+  /**
+   * @param authentication
+   * @param id
+   * @return
+   */
   public Customer authenticateCustomerId(Authentication authentication, Long id) {
     String username = authentication.getName();
 
@@ -52,6 +70,10 @@ public class CustomerRecordDetailsService implements CustomerAccessService {
     return customer;
   }
 
+  /**
+   * @param id
+   * @return
+   */
   public CustomerBill calculateCustomerBill(Long id) {
     List<CustomerDevice> customerDevices =
         customerDeviceRepository.getCustomerDevicesByCustomerId(id);

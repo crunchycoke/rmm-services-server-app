@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ *
+ */
 @RestController
 @CrossOrigin
 public class JwtAuthenticationController {
@@ -28,6 +31,11 @@ public class JwtAuthenticationController {
   private final JwtTokenUtil jwtTokenUtil;
   private final JwtUserDetailsService userDetailsService;
 
+  /**
+   * @param authenticationManager
+   * @param jwtTokenUtil
+   * @param userDetailsService
+   */
   public JwtAuthenticationController(AuthenticationManager authenticationManager,
       JwtTokenUtil jwtTokenUtil,
       JwtUserDetailsService userDetailsService) {
@@ -36,6 +44,11 @@ public class JwtAuthenticationController {
     this.userDetailsService = userDetailsService;
   }
 
+  /**
+   * @param authenticationRequest
+   * @return
+   * @throws Exception
+   */
   @PostMapping("/authenticate")
   public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest)
       throws Exception {
@@ -51,6 +64,10 @@ public class JwtAuthenticationController {
     return ResponseEntity.ok(new JwtResponse(token));
   }
 
+  /**
+   * @param customer
+   * @return
+   */
   @PostMapping("/register")
   public ResponseEntity<?> saveCustomer(@RequestBody Customer customer) {
     log.info("Attempting to register customer " + customer);
@@ -58,6 +75,11 @@ public class JwtAuthenticationController {
     return ResponseEntity.ok(userDetailsService.save(customer));
   }
 
+  /**
+   * @param username
+   * @param password
+   * @throws Exception
+   */
   private void authenticate(String username, String password) throws Exception {
     log.info("Attempting to authenticate customer credentials");
 

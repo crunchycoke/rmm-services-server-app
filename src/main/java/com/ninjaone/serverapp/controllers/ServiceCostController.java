@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ *
+ */
 @RestController
 public class ServiceCostController {
 
@@ -24,12 +27,19 @@ public class ServiceCostController {
     private final ServiceCostRecordDetailsService serviceCostRecordDetailsService;
     private final ServiceCostModelAssembler serviceCostModelAssembler;
 
+    /**
+     * @param serviceCostRecordDetailsService
+     * @param serviceCostModelAssembler
+     */
     public ServiceCostController(ServiceCostRecordDetailsService serviceCostRecordDetailsService,
         ServiceCostModelAssembler serviceCostModelAssembler) {
         this.serviceCostRecordDetailsService = serviceCostRecordDetailsService;
         this.serviceCostModelAssembler = serviceCostModelAssembler;
     }
 
+    /**
+     * @return
+     */
     @GetMapping("/services")
     public CollectionModel<EntityModel<ServiceCost>> getAllServiceCosts() {
         log.info("Attempting to get all device services.");
@@ -43,6 +53,10 @@ public class ServiceCostController {
             linkTo(methodOn(ServiceCostController.class).getAllServiceCosts()).withSelfRel());
     }
 
+    /**
+     * @param id
+     * @return
+     */
     @GetMapping("/services/{id}")
     public EntityModel<ServiceCost> getServiceCostById(@PathVariable Long id) {
         log.info("Attempting to get device service " + id);

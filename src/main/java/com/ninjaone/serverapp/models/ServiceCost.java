@@ -2,11 +2,17 @@ package com.ninjaone.serverapp.models;
 
 import com.ninjaone.serverapp.enums.DeviceOperatingSystem;
 import com.ninjaone.serverapp.enums.ServiceType;
-
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
+/**
+ *
+ */
 @Entity
 @Table(name = "SERVICE_COST")
 public class ServiceCost {
@@ -24,9 +30,9 @@ public class ServiceCost {
     }
 
     public ServiceCost(String serviceName,
-                       ServiceType serviceType,
-                       DeviceOperatingSystem deviceOperatingSystem,
-                       BigDecimal servicePrice) {
+        ServiceType serviceType,
+        DeviceOperatingSystem deviceOperatingSystem,
+        BigDecimal servicePrice) {
         this.serviceName = serviceName;
         this.serviceType = serviceType;
         this.deviceOperatingSystem = deviceOperatingSystem;
@@ -84,29 +90,29 @@ public class ServiceCost {
         }
 
         return Objects.equals(id, serviceCost.id)
-                && Objects.equals(serviceName, serviceCost.serviceName)
-                && Objects.equals(serviceType, serviceCost.serviceType)
-                && Objects.equals(deviceOperatingSystem, serviceCost.deviceOperatingSystem)
-                && Objects.equals(servicePrice, serviceCost.servicePrice);
+            && Objects.equals(serviceName, serviceCost.serviceName)
+            && Objects.equals(serviceType, serviceCost.serviceType)
+            && Objects.equals(deviceOperatingSystem, serviceCost.deviceOperatingSystem)
+            && Objects.equals(servicePrice, serviceCost.servicePrice);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id,
-                serviceName,
-                serviceType,
-                deviceOperatingSystem,
-                servicePrice);
+            serviceName,
+            serviceType,
+            deviceOperatingSystem,
+            servicePrice);
     }
 
     @Override
     public String toString() {
         return "ServiceCost{" +
-                "id=" + id +
-                ", serviceName='" + serviceName + '\'' +
-                ", serviceType='" + serviceType + '\'' +
-                ", serviceDeviceType='" + deviceOperatingSystem + '\'' +
-                ", serviceCost=" + servicePrice +
-                '}';
+            "id=" + id +
+            ", serviceName='" + serviceName + '\'' +
+            ", serviceType='" + serviceType + '\'' +
+            ", serviceDeviceType='" + deviceOperatingSystem + '\'' +
+            ", serviceCost=" + servicePrice +
+            '}';
     }
 }

@@ -9,9 +9,16 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
+/**
+ *
+ */
 @Component
-public class CustomerDeviceModelAssembler implements RepresentationModelAssembler<CustomerDevice, EntityModel<CustomerDevice>> {
+public class CustomerDeviceModelAssembler implements
+    RepresentationModelAssembler<CustomerDevice, EntityModel<CustomerDevice>> {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public EntityModel<CustomerDevice> toModel(CustomerDevice customerDevice) {
         return EntityModel.of(customerDevice,

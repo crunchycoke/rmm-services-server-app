@@ -24,6 +24,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ *
+ */
 @RestController
 public class CustomerDeviceController {
 
@@ -33,6 +36,12 @@ public class CustomerDeviceController {
     private final CustomerRecordDetailsService customerRecordDetailsService;
     private final CustomerDeviceModelAssembler customerDeviceAssembler;
 
+    /**
+     *
+     * @param customerDeviceRecordDetailsService
+     * @param customerRecordDetailsService
+     * @param customerDeviceAssembler
+     */
     public CustomerDeviceController(
         CustomerDeviceRecordDetailsService customerDeviceRecordDetailsService,
         CustomerRecordDetailsService customerRecordDetailsService,
@@ -42,6 +51,10 @@ public class CustomerDeviceController {
         this.customerDeviceAssembler = customerDeviceAssembler;
     }
 
+    /**
+     *
+     * @return
+     */
     @GetMapping("/customers/devices")
     public CollectionModel<EntityModel<CustomerDevice>> getAllCustomerDevices() {
         log.info("Attempting to get all customer devices.");
@@ -56,6 +69,12 @@ public class CustomerDeviceController {
             .getAllCustomerDevices()).withSelfRel());
     }
 
+    /**
+     *
+     * @param authentication
+     * @param customerId
+     * @return
+     */
     @GetMapping("/customers/{customerId}/devices")
     public CollectionModel<EntityModel<CustomerDevice>> getCustomerDeviceByCustomerId(
         Authentication authentication,
@@ -74,6 +93,13 @@ public class CustomerDeviceController {
             .getAllCustomerDevices()).withSelfRel());
     }
 
+    /**
+     *
+     * @param authentication
+     * @param customerId
+     * @param id
+     * @return
+     */
     @GetMapping("/customers/{customerId}/devices/{id}")
     public EntityModel<CustomerDevice> getCustomerDeviceById(Authentication authentication,
         @PathVariable Long customerId,
@@ -88,6 +114,13 @@ public class CustomerDeviceController {
         return customerDeviceAssembler.toModel(customerDevice);
     }
 
+    /**
+     *
+     * @param authentication
+     * @param newCustomerDevice
+     * @param customerId
+     * @return
+     */
     @PostMapping("/customers/{customerId}/devices")
     public ResponseEntity<?> addCustomerDevice(Authentication authentication,
         @RequestBody CustomerDevice newCustomerDevice,
@@ -107,6 +140,14 @@ public class CustomerDeviceController {
             .body(customerDeviceEntityModel);
     }
 
+    /**
+     *
+     * @param authentication
+     * @param newCustomerDevice
+     * @param customerId
+     * @param id
+     * @return
+     */
     @PutMapping("/customers/{customerId}/devices/{id}")
     public ResponseEntity<?> updateCustomerDevice(Authentication authentication,
         @RequestBody CustomerDevice newCustomerDevice,
@@ -127,6 +168,12 @@ public class CustomerDeviceController {
             .toUri()).body(customerDeviceEntityModel);
     }
 
+    /**
+     * @param authentication
+     * @param customerId
+     * @param id
+     * @return
+     */
     @DeleteMapping("/customers/{customerId}/devices/{id}")
     public ResponseEntity<?> deleteCustomerDevice(Authentication authentication,
         @PathVariable Long customerId,

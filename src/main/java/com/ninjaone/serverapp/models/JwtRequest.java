@@ -3,6 +3,9 @@ package com.ninjaone.serverapp.models;
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ *
+ */
 public class JwtRequest implements Serializable {
 
   @Serial

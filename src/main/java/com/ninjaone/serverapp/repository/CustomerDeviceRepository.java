@@ -1,15 +1,17 @@
 package com.ninjaone.serverapp.repository;
 
 import com.ninjaone.serverapp.models.CustomerDevice;
+import java.util.List;
+import java.util.Optional;
+import javax.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Optional;
-
+/**
+ *
+ */
 public interface CustomerDeviceRepository extends JpaRepository<CustomerDevice, Long> {
 
     // Get all devices from customer

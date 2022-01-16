@@ -14,6 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+/**
+ *
+ */
 @Service
 public class CustomerDeviceRecordDetailsService implements CustomerDeviceAccessService {
 
@@ -23,12 +26,20 @@ public class CustomerDeviceRecordDetailsService implements CustomerDeviceAccessS
   private final CustomerRepository customerRepository;
   private final CustomerDeviceRepository customerDeviceRepository;
 
+  /**
+   *
+   * @param customerRepository
+   * @param customerDeviceRepository
+   */
   public CustomerDeviceRecordDetailsService(CustomerRepository customerRepository,
       CustomerDeviceRepository customerDeviceRepository) {
     this.customerRepository = customerRepository;
     this.customerDeviceRepository = customerDeviceRepository;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public List<CustomerDevice> getCustomerDevices() {
     List<CustomerDevice> customerDevices = customerDeviceRepository.findAll();
@@ -36,6 +47,9 @@ public class CustomerDeviceRecordDetailsService implements CustomerDeviceAccessS
     return customerDevices;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public List<CustomerDevice> getCustomerDevicesByCustomerId(Long customerId) {
     List<CustomerDevice> customerDevices =
@@ -48,6 +62,9 @@ public class CustomerDeviceRecordDetailsService implements CustomerDeviceAccessS
     return customerDevices;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public CustomerDevice getCustomerDeviceById(Long id, Long customerId) {
     CustomerDevice customerDevice = customerDeviceRepository.getCustomerDeviceById(id, customerId)
@@ -56,6 +73,9 @@ public class CustomerDeviceRecordDetailsService implements CustomerDeviceAccessS
     return customerDevice;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public CustomerDevice addCustomerDevice(CustomerDevice newCustomerDevice, Long customerId) {
     Optional<CustomerDevice> customerDevice = customerDeviceRepository.getCustomerDeviceById(
@@ -86,6 +106,9 @@ public class CustomerDeviceRecordDetailsService implements CustomerDeviceAccessS
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public CustomerDevice updateCustomerDevice(Long id, CustomerDevice newCustomerDevice,
       Long customerId) {
@@ -118,6 +141,9 @@ public class CustomerDeviceRecordDetailsService implements CustomerDeviceAccessS
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public int deleteCustomerDevice(Long id, Long customerId) {
     int deletedCustomerDevices = customerDeviceRepository.deleteByCustomerDeviceId(id, customerId);

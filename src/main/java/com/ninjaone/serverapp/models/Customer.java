@@ -13,6 +13,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+/**
+ *
+ */
 @Entity
 @Table(name = "CUSTOMER")
 public class Customer {
@@ -39,9 +42,9 @@ public class Customer {
     private List<CustomerDevice> customerDevices = new ArrayList<>();
 
     @OneToMany(
-            mappedBy = "customer",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
+        mappedBy = "customer",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
     )
     private List<CustomerService> customerServices = new ArrayList<>();
 
@@ -49,7 +52,7 @@ public class Customer {
     }
 
     public Customer(String firstName, String middleName, String lastName,
-                    String username, String password) {
+        String username, String password) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
@@ -132,35 +135,35 @@ public class Customer {
         }
 
         return Objects.equals(id, customer.id)
-                && Objects.equals(firstName, customer.firstName)
-                && Objects.equals(middleName, customer.middleName)
-                && Objects.equals(lastName, customer.lastName)
-                && Objects.equals(username, customer.username)
-                && Objects.equals(password, customer.password)
-                && Objects.equals(customerDevices, customer.customerDevices)
-                && Objects.equals(customerServices, customer.customerServices);
+            && Objects.equals(firstName, customer.firstName)
+            && Objects.equals(middleName, customer.middleName)
+            && Objects.equals(lastName, customer.lastName)
+            && Objects.equals(username, customer.username)
+            && Objects.equals(password, customer.password)
+            && Objects.equals(customerDevices, customer.customerDevices)
+            && Objects.equals(customerServices, customer.customerServices);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id,
-                firstName,
-                middleName,
-                lastName,
-                username,
-                password,
-                customerDevices,
-                customerServices);
+            firstName,
+            middleName,
+            lastName,
+            username,
+            password,
+            customerDevices,
+            customerServices);
     }
 
     @Override
     public String toString() {
         return "Customer{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", middleName='" + middleName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", username='" + username + '\'' +
-                '}';
+            "id=" + id +
+            ", firstName='" + firstName + '\'' +
+            ", middleName='" + middleName + '\'' +
+            ", lastName='" + lastName + '\'' +
+            ", username='" + username + '\'' +
+            '}';
     }
 }

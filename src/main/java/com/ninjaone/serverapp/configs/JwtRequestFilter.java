@@ -15,18 +15,29 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+/**
+ *
+ */
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
   private final JwtUserDetailsService jwtUserDetailsService;
   private final JwtTokenUtil jwtTokenUtil;
 
+  /**
+   *
+   * @param jwtUserDetailsService
+   * @param jwtTokenUtil
+   */
   public JwtRequestFilter(JwtUserDetailsService jwtUserDetailsService,
       JwtTokenUtil jwtTokenUtil) {
     this.jwtUserDetailsService = jwtUserDetailsService;
     this.jwtTokenUtil = jwtTokenUtil;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
       FilterChain chain) throws ServletException, IOException {
