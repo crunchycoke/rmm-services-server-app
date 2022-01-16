@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 /**
- *
+ * Repository used for accessing data within the Service Cost table.
  */
 public interface ServiceCostRepository extends JpaRepository<ServiceCost, Long> {
 

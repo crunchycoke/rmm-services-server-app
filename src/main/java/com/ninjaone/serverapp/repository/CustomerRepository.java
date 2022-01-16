@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 /**
- *
+ * Repository used for accessing data within the Customer table.
  */
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 

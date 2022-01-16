@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 /**
- *
+ * Repository used for accessing data within the Customer Device table.
  */
 public interface CustomerDeviceRepository extends JpaRepository<CustomerDevice, Long> {
 

@@ -10,7 +10,7 @@ import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
 /**
- *
+ * Assembles a Customer Service object into an EntityModel form.
  */
 @Component
 public class CustomerServiceModelAssembler implements
