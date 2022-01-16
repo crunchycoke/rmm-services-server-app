@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- *
+ * Transforms the exception thrown to a specific HTTP status and body for user handling.
  */
 @ControllerAdvice
 public class EntryCannotBeAddedAdvice {
