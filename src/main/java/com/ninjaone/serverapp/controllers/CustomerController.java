@@ -6,7 +6,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import com.ninjaone.serverapp.enums.DeviceOperatingSystem;
 import com.ninjaone.serverapp.enums.DeviceType;
 import com.ninjaone.serverapp.exceptions.CustomerNotFoundException;
-import com.ninjaone.serverapp.exceptions.EntryCannotBeAddedException;
 import com.ninjaone.serverapp.exceptions.ServiceCostNotFoundException;
 import com.ninjaone.serverapp.modelassemblers.CustomerModelAssembler;
 import com.ninjaone.serverapp.models.Customer;
@@ -24,12 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.IanaLinkRelations;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -125,21 +120,5 @@ public class CustomerController {
         }
 
         return customerBill;
-    }
-
-    @PostMapping("/customers")
-    public ResponseEntity<?> addCustomer(@RequestBody Customer newCustomer) {
-        log.info("Attempting to add customer " + newCustomer);
-
-        try {
-            EntityModel<Customer> customerEntityModel =
-                customerAssembler.toModel(customerRepository.save(newCustomer));
-
-            return ResponseEntity.created(customerEntityModel
-                            .getRequiredLink(IanaLinkRelations.SELF).toUri())
-                    .body(customerEntityModel);
-        } catch (Exception ex) {
-            throw new EntryCannotBeAddedException(newCustomer, ex);
-        }
     }
 }
