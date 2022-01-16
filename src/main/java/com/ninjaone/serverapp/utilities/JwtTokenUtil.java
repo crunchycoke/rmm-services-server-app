@@ -14,7 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 /**
- *
+ * Utility class for handling JWT token.
  */
 @Component
 public class JwtTokenUtil implements Serializable {
@@ -27,79 +27,78 @@ public class JwtTokenUtil implements Serializable {
   @Value("${jwt.secret}")
   private String secret;
 
-  //retrieve username from jwt token
-
   /**
-   * @param token
-   * @return
+   * Retrieves the username from the token
+   *
+   * @param token Represents the token containing the authorization information.
+   * @return The username from the token.
    */
   public String getUsernameFromToken(String token) {
     return getClaimFromToken(token, Claims::getSubject);
   }
 
-  //retrieve expiration date from jwt token
-
   /**
-   * @param token
-   * @return
+   * Retrieves the expiration from the token
+   *
+   * @param token Represents the token containing the authorization information.
+   * @return The expiration from the token.
    */
   public Date getExpirationDateFromToken(String token) {
     return getClaimFromToken(token, Claims::getExpiration);
   }
 
   /**
-   * @param token
-   * @param claimsResolver
-   * @param <T>
-   * @return
+   * Retrieves the claim information from the token
+   *
+   * @param token          Represents the token containing the authorization information.
+   * @param claimsResolver Represents the claims resolver passed with a specified type.
+   * @param <T>            The type of the object provided within the claims resolver.
+   * @return The claim as an object from the token.
    */
   public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
     final Claims claims = getAllClaimsFromToken(token);
     return claimsResolver.apply(claims);
   }
 
-  //for retrieving any information from token we will need the secret key
-
   /**
-   * @param token
-   * @return
+   * Retrieves all claims from the token
+   *
+   * @param token Represents the token containing the authorization information.
+   * @return The claim attached within the token provided.
    */
   private Claims getAllClaimsFromToken(String token) {
     return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
   }
 
-  //check if the token has expired
-
   /**
-   * @param token
-   * @return
+   * Checks whether the token provided is expired or not.
+   *
+   * @param token Represents the token containing the authorization information.
+   * @return A boolean value denoting whether the token is expired or not.
    */
   private Boolean isTokenExpired(String token) {
     final Date expiration = getExpirationDateFromToken(token);
     return expiration.before(new Date());
   }
 
-  //generate token for user
-
   /**
-   * @param userDetails
-   * @return
+   * Creates a token using the provided UserDetails object.
+   *
+   * @param userDetails Represents the user information for generating a token.
+   * @return A token generated using the user details provided.
    */
   public String generateToken(UserDetails userDetails) {
     Map<String, Object> claims = new HashMap<>();
     return doGenerateToken(claims, userDetails.getUsername());
   }
 
-  //while creating the token -
-  //1. Define  claims of the token, like Issuer, Expiration, Subject, and the ID
-  //2. Sign the JWT using the HS512 algorithm and secret key.
-  //3. According to JWS Compact Serialization(https://tools.ietf.org/html/draft-ietf-jose-json-web-signature-41#section-3.1)
-  //   compaction of the JWT to a URL-safe string
-
   /**
-   * @param claims
-   * @param subject
-   * @return
+   * Creates the token by defining the claims, then signing using the secret key and HS512
+   * algorithm. Also compacts the token to a URL safe string.
+   *
+   * @param claims  Represents the claims to be provided for generating a token.
+   * @param subject Represents the subject of the token.
+   * @return A token value from the data provided.
    */
   private String doGenerateToken(Map<String, Object> claims, String subject) {
 
@@ -109,12 +108,12 @@ public class JwtTokenUtil implements Serializable {
         .signWith(SignatureAlgorithm.HS512, secret).compact();
   }
 
-  //validate token
-
   /**
-   * @param token
-   * @param userDetails
-   * @return
+   * Validates the token provided using the user details attached to the token.
+   *
+   * @param token       Represents the token containing the authorization information.
+   * @param userDetails Represents the user details.
+   * @return A boolean value whether the token is valid or not.
    */
   public Boolean validateToken(String token, UserDetails userDetails) {
     final String username = getUsernameFromToken(token);

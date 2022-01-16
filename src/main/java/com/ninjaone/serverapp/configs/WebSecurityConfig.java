@@ -16,7 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- *
+ * Web security configuration with JWT token handling.
  */
 @Configuration
 @EnableWebSecurity
@@ -28,10 +28,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   private final JwtRequestFilter jwtRequestFilter;
 
   /**
+   * Constructor with dependency injection for web security configuration.
    *
-   * @param jwtAuthenticationEntryPoint
-   * @param jwtUserDetailsService
-   * @param jwtRequestFilter
+   * @param jwtAuthenticationEntryPoint Represents the entry point for JWT token handling.
+   * @param jwtUserDetailsService       Represents the service used for JWT authentication.
+   * @param jwtRequestFilter            Represents the filter for handling JWT authentication.
    */
   public WebSecurityConfig(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
       UserDetailsService jwtUserDetailsService,
@@ -43,9 +44,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Autowired
   public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-    // configure AuthenticationManager so that it knows from where to load
-    // user for matching credentials
-    // Use BCryptPasswordEncoder
+    // Autowired for AuthenticationManagerBuilder authentication
+    // Defined password encoded is used.
     auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
   }
 
@@ -68,20 +68,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
    */
   @Override
   protected void configure(HttpSecurity httpSecurity) throws Exception {
-    // We don't need CSRF for this example
+
     httpSecurity.headers().frameOptions().disable().and()
+        // Disable and ignore h2-console for database console management
         .csrf().ignoringAntMatchers("/h2-console/**").disable()
-        // dont authenticate this particular request
+        // Skip authentication on specific endpoints.
         .authorizeRequests().antMatchers("/h2console/**", "/authenticate", "/register").permitAll()
-        // all other requests need to be authenticated
+        // Everything else requires authentication
         .anyRequest().authenticated().and()
-        // make sure we use stateless session; session won't be used to
-        // store user's state.
+        // No sessions and stateless created for managing user state for mockup purposes.
         .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and()
         .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-    // Add a filter to validate the tokens with every request
+    // Add filter class for authentication handling.
     httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
   }
 }
