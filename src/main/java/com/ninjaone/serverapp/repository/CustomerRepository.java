@@ -13,4 +13,17 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
       "from Customer customer " +
       "where customer.username = :username")
   Optional<Customer> getCustomerByUsername(@Param("username") String username);
+
+  // Get specific customer
+  @Query("select customer " +
+      "from Customer customer " +
+      "where customer.id = :id")
+  Optional<Customer> getCustomerById(@Param("id") Long id);
+
+  // Get specific customer
+  @Query("select customer " +
+      "from Customer customer " +
+      "where customer.id = :id and customer.username = :username")
+  Optional<Customer> getCustomerByIdAndUsername(@Param("id") Long id,
+      @Param("username") String username);
 }

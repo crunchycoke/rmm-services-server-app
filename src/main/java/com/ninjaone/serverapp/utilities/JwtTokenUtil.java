@@ -1,4 +1,4 @@
-package com.ninjaone.serverapp.data;
+package com.ninjaone.serverapp.utilities;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

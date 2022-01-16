@@ -1,40 +1,40 @@
 package com.ninjaone.serverapp.controllers;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import com.ninjaone.serverapp.enums.ServiceType;
 import com.ninjaone.serverapp.exceptions.CustomerServiceNotFoundException;
 import com.ninjaone.serverapp.exceptions.EntryCannotBeAddedException;
 import com.ninjaone.serverapp.modelassemblers.CustomerServiceModelAssembler;
 import com.ninjaone.serverapp.models.CustomerService;
-import com.ninjaone.serverapp.repository.CustomerRepository;
 import com.ninjaone.serverapp.repository.CustomerServiceRepository;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class CustomerServiceController {
 
     private static final Logger log = LoggerFactory.getLogger(CustomerServiceController.class);
 
-    private final CustomerRepository customerRepository;
     private final CustomerServiceRepository customerServiceRepository;
     private final CustomerServiceModelAssembler customerServiceAssembler;
 
-    public CustomerServiceController(CustomerRepository customerRepository,
-                                     CustomerServiceRepository customerServiceRepository,
-                                     CustomerServiceModelAssembler customerServiceAssembler) {
-        this.customerRepository = customerRepository;
+    public CustomerServiceController(CustomerServiceRepository customerServiceRepository,
+        CustomerServiceModelAssembler customerServiceAssembler) {
         this.customerServiceRepository = customerServiceRepository;
         this.customerServiceAssembler = customerServiceAssembler;
     }

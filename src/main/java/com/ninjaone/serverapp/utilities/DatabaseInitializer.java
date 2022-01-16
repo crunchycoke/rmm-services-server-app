@@ -1,4 +1,4 @@
-package com.ninjaone.serverapp.data;
+package com.ninjaone.serverapp.utilities;
 
 import com.ninjaone.serverapp.enums.DeviceOperatingSystem;
 import com.ninjaone.serverapp.enums.ServiceType;

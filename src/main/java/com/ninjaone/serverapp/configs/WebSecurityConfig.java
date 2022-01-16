@@ -66,11 +66,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-    // .and()
-    //            .headers().frameOptions().disable()
-    //            .and()
-    //            .csrf().ignoringAntMatchers("/h2-console/**")
-
     // Add a filter to validate the tokens with every request
     httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
   }
