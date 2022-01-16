@@ -1,5 +1,6 @@
 package com.ninjaone.serverapp.services;
 
+import com.ninjaone.serverapp.exceptions.EntryCannotBeAddedException;
 import com.ninjaone.serverapp.models.Customer;
 import com.ninjaone.serverapp.repository.CustomerRepository;
 import java.util.ArrayList;
@@ -35,6 +36,10 @@ public class JwtUserDetailsService implements UserDetailsService {
   public Customer save(Customer customer) {
     customer.setPassword(bcryptEncoder.encode(customer.getPassword()));
 
-    return customerRepository.save(customer);
+    try {
+      return customerRepository.save(customer);
+    } catch (Exception ex) {
+      throw new EntryCannotBeAddedException(customer, ex);
+    }
   }
 }

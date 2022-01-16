@@ -1,42 +1,44 @@
 package com.ninjaone.serverapp.controllers;
 
-import com.ninjaone.serverapp.exceptions.CustomerDeviceNotFoundException;
-import com.ninjaone.serverapp.exceptions.CustomerNotFoundException;
-import com.ninjaone.serverapp.exceptions.EntryCannotBeAddedException;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import com.ninjaone.serverapp.modelassemblers.CustomerDeviceModelAssembler;
-import com.ninjaone.serverapp.models.Customer;
 import com.ninjaone.serverapp.models.CustomerDevice;
-import com.ninjaone.serverapp.repository.CustomerDeviceRepository;
-import com.ninjaone.serverapp.repository.CustomerRepository;
+import com.ninjaone.serverapp.services.CustomerDeviceRecordDetailsService;
+import com.ninjaone.serverapp.services.CustomerRecordDetailsService;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class CustomerDeviceController {
 
     private static final Logger log = LoggerFactory.getLogger(CustomerDeviceController.class);
 
-    private final CustomerRepository customerRepository;
-    private final CustomerDeviceRepository customerDeviceRepository;
+    private final CustomerDeviceRecordDetailsService customerDeviceRecordDetailsService;
+    private final CustomerRecordDetailsService customerRecordDetailsService;
     private final CustomerDeviceModelAssembler customerDeviceAssembler;
 
-    public CustomerDeviceController(CustomerRepository customerRepository,
-                                    CustomerDeviceRepository customerDeviceRepository,
-                                    CustomerDeviceModelAssembler customerDeviceAssembler) {
-        this.customerRepository = customerRepository;
-        this.customerDeviceRepository = customerDeviceRepository;
+    public CustomerDeviceController(
+        CustomerDeviceRecordDetailsService customerDeviceRecordDetailsService,
+        CustomerRecordDetailsService customerRecordDetailsService,
+        CustomerDeviceModelAssembler customerDeviceAssembler) {
+        this.customerDeviceRecordDetailsService = customerDeviceRecordDetailsService;
+        this.customerRecordDetailsService = customerRecordDetailsService;
         this.customerDeviceAssembler = customerDeviceAssembler;
     }
 
@@ -45,122 +47,96 @@ public class CustomerDeviceController {
         log.info("Attempting to get all customer devices.");
 
         List<EntityModel<CustomerDevice>> customerDevices =
-                customerDeviceRepository.findAll().stream()
-                        .map(customerDeviceAssembler::toModel)
-                        .collect(Collectors.toList());
+            customerDeviceRecordDetailsService.getCustomerDevices()
+                .stream()
+                .map(customerDeviceAssembler::toModel)
+                .collect(Collectors.toList());
 
         return CollectionModel.of(customerDevices, linkTo(methodOn(CustomerDeviceController.class)
-                .getAllCustomerDevices()).withSelfRel());
+            .getAllCustomerDevices()).withSelfRel());
     }
 
     @GetMapping("/customers/{customerId}/devices")
-    public CollectionModel<EntityModel<CustomerDevice>> getCustomerDeviceByCustomerId(@PathVariable Long customerId) {
+    public CollectionModel<EntityModel<CustomerDevice>> getCustomerDeviceByCustomerId(
+        Authentication authentication,
+        @PathVariable Long customerId) {
         log.info("Attempting to get all customer " + customerId + " devices.");
 
-        List<EntityModel<CustomerDevice>> customerDevices =
-                customerDeviceRepository.getCustomerDevicesByCustomerId(customerId).stream()
-                        .map(customerDeviceAssembler::toModel)
-                        .collect(Collectors.toList());
+        customerRecordDetailsService.authenticateCustomerId(authentication, customerId);
 
-        if (customerDevices.isEmpty()) {
-            throw new CustomerDeviceNotFoundException(customerId);
-        }
+        List<EntityModel<CustomerDevice>> customerDevices =
+            customerDeviceRecordDetailsService.getCustomerDevicesByCustomerId(customerId)
+                .stream()
+                .map(customerDeviceAssembler::toModel)
+                .collect(Collectors.toList());
 
         return CollectionModel.of(customerDevices, linkTo(methodOn(CustomerDeviceController.class)
-                .getAllCustomerDevices()).withSelfRel());
+            .getAllCustomerDevices()).withSelfRel());
     }
 
     @GetMapping("/customers/{customerId}/devices/{id}")
-    public EntityModel<CustomerDevice> getCustomerDeviceById(@PathVariable Long customerId,
-                                                             @PathVariable Long id) {
+    public EntityModel<CustomerDevice> getCustomerDeviceById(Authentication authentication,
+        @PathVariable Long customerId,
+        @PathVariable Long id) {
         log.info("Attempting to get customer " + customerId + " device " + id);
 
-        CustomerDevice customerDevice = customerDeviceRepository.getCustomerDeviceById(id, customerId)
-                .orElseThrow(() -> new CustomerDeviceNotFoundException(id));
+        customerRecordDetailsService.authenticateCustomerId(authentication, customerId);
+
+        CustomerDevice customerDevice =
+            customerDeviceRecordDetailsService.getCustomerDeviceById(id, customerId);
 
         return customerDeviceAssembler.toModel(customerDevice);
     }
 
     @PostMapping("/customers/{customerId}/devices")
-    public ResponseEntity<?> addCustomerDevice(@RequestBody CustomerDevice newCustomerDevice,
-                                               @PathVariable Long customerId) {
+    public ResponseEntity<?> addCustomerDevice(Authentication authentication,
+        @RequestBody CustomerDevice newCustomerDevice,
+        @PathVariable Long customerId) {
         log.info("Attempting to add customer device " + newCustomerDevice);
 
-        Optional<CustomerDevice> customerDevice =
-                customerDeviceRepository.getCustomerDeviceById(newCustomerDevice.getId(), customerId);
+        customerRecordDetailsService.authenticateCustomerId(authentication, customerId);
 
-        if (customerDevice.isPresent()) {
-            throw new EntryCannotBeAddedException(newCustomerDevice);
-        } else {
-            var createdCustomerServices = customerDeviceRepository
-                    .insertNewCustomerDevice(newCustomerDevice.getId(),
-                            newCustomerDevice.getSystemName(),
-                            newCustomerDevice.getDeviceType().ordinal(),
-                            customerId);
+        CustomerDevice customerDevice =
+            customerDeviceRecordDetailsService.addCustomerDevice(newCustomerDevice, customerId);
 
-            if (createdCustomerServices == 1) {
-                Optional<CustomerDevice> updateCustomerDevice = customerDeviceRepository
-                        .getCustomerDeviceById(newCustomerDevice.getId(), customerId);
+        EntityModel<CustomerDevice> customerDeviceEntityModel = customerDeviceAssembler.toModel(
+            customerDevice);
 
-                if (updateCustomerDevice.isPresent()) {
-                    EntityModel<CustomerDevice> customerDeviceEntityModel = customerDeviceAssembler.toModel(updateCustomerDevice.get());
-
-                    return ResponseEntity.created(customerDeviceEntityModel
-                                    .getRequiredLink(IanaLinkRelations.SELF).toUri())
-                            .body(customerDeviceEntityModel);
-                } else {
-                    return ResponseEntity.unprocessableEntity().build();
-                }
-            } else {
-                return ResponseEntity.badRequest().build();
-            }
-        }
+        return ResponseEntity.created(customerDeviceEntityModel
+                .getRequiredLink(IanaLinkRelations.SELF).toUri())
+            .body(customerDeviceEntityModel);
     }
 
     @PutMapping("/customers/{customerId}/devices/{id}")
-    public ResponseEntity<?> replaceCustomerDevice(@RequestBody CustomerDevice newCustomerDevice,
-                                                   @PathVariable Long customerId,
-                                                   @PathVariable Long id) {
-        log.info("Attempting to replace customer device " + newCustomerDevice);
+    public ResponseEntity<?> updateCustomerDevice(Authentication authentication,
+        @RequestBody CustomerDevice newCustomerDevice,
+        @PathVariable Long customerId,
+        @PathVariable Long id) {
+        log.info("Attempting to update customer device " + newCustomerDevice);
 
-        try {
-            Customer customer = customerRepository.findById(customerId)
-                    .orElseThrow(() -> new CustomerNotFoundException(customerId));
-            newCustomerDevice.setCustomer(customer);
+        customerRecordDetailsService.authenticateCustomerId(authentication, customerId);
 
-            CustomerDevice updatedCustomerDevice = customerDeviceRepository.getCustomerDeviceById(id, customerId)
-                    .map(customerDevice -> {
-                        customerDevice.setDeviceType(newCustomerDevice.getDeviceType());
-                        customerDevice.setSystemName(newCustomerDevice.getSystemName());
+        CustomerDevice updatedCustomerDevice = customerDeviceRecordDetailsService.updateCustomerDevice(
+            id, newCustomerDevice, customerId);
 
-                        log.info("Attempting to replace customer device.");
+        EntityModel<CustomerDevice> customerDeviceEntityModel = customerDeviceAssembler.toModel(
+            updatedCustomerDevice);
 
-                        return customerDeviceRepository.save(customerDevice);
-                    })
-                    .orElseGet(() -> {
-                        newCustomerDevice.setId(id);
-
-                        log.info("Attempting to added customer device.");
-
-                        return customerDeviceRepository.save(newCustomerDevice);
-                    });
-
-            EntityModel<CustomerDevice> customerDeviceEntityModel = customerDeviceAssembler.toModel(updatedCustomerDevice);
-
-            return ResponseEntity.created(customerDeviceEntityModel
-                    .getRequiredLink(IanaLinkRelations.SELF)
-                    .toUri()).body(customerDeviceEntityModel);
-        } catch (Exception ex) {
-            throw new EntryCannotBeAddedException(newCustomerDevice, ex);
-        }
+        return ResponseEntity.created(customerDeviceEntityModel
+            .getRequiredLink(IanaLinkRelations.SELF)
+            .toUri()).body(customerDeviceEntityModel);
     }
 
     @DeleteMapping("/customers/{customerId}/devices/{id}")
-    public ResponseEntity<?> deleteCustomerDevice(@PathVariable Long customerId,
-                                                  @PathVariable Long id) {
+    public ResponseEntity<?> deleteCustomerDevice(Authentication authentication,
+        @PathVariable Long customerId,
+        @PathVariable Long id) {
         log.info("Attempting to delete customer " + customerId + " device " + id);
 
-        int deletedCustomerDevices = customerDeviceRepository.deleteByCustomerDeviceId(id, customerId);
+        customerRecordDetailsService.authenticateCustomerId(authentication, customerId);
+
+        int deletedCustomerDevices =
+            customerDeviceRecordDetailsService.deleteCustomerDevice(id, customerId);
 
         if (deletedCustomerDevices == 1) {
             return ResponseEntity.ok().build();

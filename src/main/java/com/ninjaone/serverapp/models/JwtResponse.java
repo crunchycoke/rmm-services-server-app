@@ -1,10 +1,12 @@
 package com.ninjaone.serverapp.models;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class JwtResponse implements Serializable {
 
-  private static final long serialVersionUID = -8091879091924046844L;
+  @Serial
+  private static final long serialVersionUID = 1L;
   private final String jwtToken;
 
   public JwtResponse(String jwtToken) {
