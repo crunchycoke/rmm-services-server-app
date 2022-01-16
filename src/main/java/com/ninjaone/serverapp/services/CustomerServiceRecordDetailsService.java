@@ -24,8 +24,10 @@ public class CustomerServiceRecordDetailsService implements CustomerServiceAcces
   private final CustomerServiceRepository customerServiceRepository;
 
   /**
+   * Constructs the service used for accessing the records and details within the service table.
    *
-   * @param customerServiceRepository
+   * @param customerServiceRepository Represents the repository used for accessing the service table
+   *                                  loaded through dependency injection.
    */
   public CustomerServiceRecordDetailsService(CustomerServiceRepository customerServiceRepository) {
     this.customerServiceRepository = customerServiceRepository;
@@ -37,6 +39,8 @@ public class CustomerServiceRecordDetailsService implements CustomerServiceAcces
   @Override
   public List<CustomerService> getCustomerServices() {
     List<CustomerService> customerServices = customerServiceRepository.findAll();
+
+    log.info("Retrieved all available customer services.");
 
     return customerServices;
   }
@@ -50,6 +54,8 @@ public class CustomerServiceRecordDetailsService implements CustomerServiceAcces
         customerServiceRepository.getCustomerServicesByCustomerId(customerId);
 
     if (customerServices.isEmpty()) {
+      log.info("No customer services found under customer ID" + customerId + ".");
+
       throw new CustomerServiceNotFoundException(customerId);
     }
 
@@ -64,6 +70,9 @@ public class CustomerServiceRecordDetailsService implements CustomerServiceAcces
     CustomerService customerService = customerServiceRepository
         .getCustomerServiceById(id, customerId)
         .orElseThrow(() -> new CustomerServiceNotFoundException(id));
+
+    log.info("Retrieved customer service using service ID "
+        + id + " under customer " + customerId + ".");
 
     return customerService;
   }
@@ -88,6 +97,8 @@ public class CustomerServiceRecordDetailsService implements CustomerServiceAcces
               newCustomerService.getServiceType().ordinal(),
               customerId);
     } catch (Exception ex) {
+      log.info("Unable to add customer service to table.", ex);
+
       throw new EntryCannotBeAddedException(newCustomerService, ex);
     }
 
@@ -108,6 +119,8 @@ public class CustomerServiceRecordDetailsService implements CustomerServiceAcces
   public int deleteCustomerService(ServiceType serviceType, Long customerId) {
     int deletedCustomerServices = customerServiceRepository.deleteByCustomerServiceType(serviceType,
         customerId);
+
+    log.info("Deleted " + deletedCustomerServices + " services.");
 
     return deletedCustomerServices;
   }

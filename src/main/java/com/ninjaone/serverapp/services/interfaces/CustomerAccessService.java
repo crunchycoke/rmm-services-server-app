@@ -10,9 +10,9 @@ import java.util.List;
 public interface CustomerAccessService {
 
   /**
-   * Retrieves a list of customer objects from the Customer database table.
+   * Retrieves all customers and their information stored within the Customer table.
    *
-   * @return A list of customer objects.
+   * @return A list of all Customer objects stored within the database.
    */
-  public abstract List<Customer> getCustomers();
+  List<Customer> getCustomers();
 }

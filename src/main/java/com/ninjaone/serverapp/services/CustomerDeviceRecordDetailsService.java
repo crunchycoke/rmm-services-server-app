@@ -27,9 +27,13 @@ public class CustomerDeviceRecordDetailsService implements CustomerDeviceAccessS
   private final CustomerDeviceRepository customerDeviceRepository;
 
   /**
+   * Constructs the service used for accessing the records and details within the customer device
+   * table.
    *
-   * @param customerRepository
-   * @param customerDeviceRepository
+   * @param customerRepository       Represents the repository used for accessing the customer table
+   *                                 loaded through dependency injection.
+   * @param customerDeviceRepository Represents the repository used for accessing the device table
+   *                                 loaded through dependency injection.
    */
   public CustomerDeviceRecordDetailsService(CustomerRepository customerRepository,
       CustomerDeviceRepository customerDeviceRepository) {
@@ -44,6 +48,8 @@ public class CustomerDeviceRecordDetailsService implements CustomerDeviceAccessS
   public List<CustomerDevice> getCustomerDevices() {
     List<CustomerDevice> customerDevices = customerDeviceRepository.findAll();
 
+    log.info("Retrieved all available customer devices.");
+
     return customerDevices;
   }
 
@@ -56,6 +62,8 @@ public class CustomerDeviceRecordDetailsService implements CustomerDeviceAccessS
         customerDeviceRepository.getCustomerDevicesByCustomerId(customerId);
 
     if (customerDevices.isEmpty()) {
+      log.info("No customer devices found under customer ID" + customerId + ".");
+
       throw new CustomerDeviceNotFoundException(customerId);
     }
 
@@ -69,6 +77,9 @@ public class CustomerDeviceRecordDetailsService implements CustomerDeviceAccessS
   public CustomerDevice getCustomerDeviceById(Long id, Long customerId) {
     CustomerDevice customerDevice = customerDeviceRepository.getCustomerDeviceById(id, customerId)
         .orElseThrow(() -> new CustomerDeviceNotFoundException(id));
+
+    log.info("Retrieved customer device using device ID "
+        + id + " under customer " + customerId + ".");
 
     return customerDevice;
   }
@@ -93,6 +104,8 @@ public class CustomerDeviceRecordDetailsService implements CustomerDeviceAccessS
               newCustomerDevice.getDeviceType().ordinal(),
               customerId);
     } catch (Exception ex) {
+      log.info("Unable to add customer device to table.", ex);
+
       throw new EntryCannotBeAddedException(newCustomerDevice, ex);
     }
 
@@ -135,6 +148,9 @@ public class CustomerDeviceRecordDetailsService implements CustomerDeviceAccessS
 
                 return customerDeviceRepository.save(newCustomerDevice);
               });
+
+      log.info("Returning updated customer device information.");
+
       return updatedCustomerDevice;
     } catch (Exception ex) {
       throw new EntryCannotBeAddedException(newCustomerDevice, ex);
@@ -147,6 +163,8 @@ public class CustomerDeviceRecordDetailsService implements CustomerDeviceAccessS
   @Override
   public int deleteCustomerDevice(Long id, Long customerId) {
     int deletedCustomerDevices = customerDeviceRepository.deleteByCustomerDeviceId(id, customerId);
+
+    log.info("Deleted " + deletedCustomerDevices + " devices.");
 
     return deletedCustomerDevices;
   }

@@ -5,41 +5,55 @@ import com.ninjaone.serverapp.models.CustomerService;
 import java.util.List;
 
 /**
- *
+ * Service used for retrieving required data from the Customer Service table. Allows retrieval of
+ * all customer services, retrieval of services by customer ID, services ID. Also allows adding,
+ * deleting, and updating of customer services.
  */
 public interface CustomerServiceAccessService {
 
   /**
-   * @return
+   * Retrieves all customer services and their information stored within the Customer Service
+   * table.
+   *
+   * @return A list of all Customer Service objects stored within the database.
    */
-  public abstract List<CustomerService> getCustomerServices();
+  List<CustomerService> getCustomerServices();
 
   /**
-   * @param customerId
-   * @return
+   * Retrieves a list of Customer Service objects tied to the provided customer ID value.
+   *
+   * @param customerId Represents the customer ID tied to the service.
+   * @return A list of customer services attached to the customer ID provided.
    */
-  public abstract List<CustomerService> getCustomerServicesByCustomerId(Long customerId);
+  List<CustomerService> getCustomerServicesByCustomerId(Long customerId);
 
   /**
-   * @param id
-   * @param customerId
-   * @return
+   * Retrieves the specific Customer Service object using the provided customer ID value.
+   *
+   * @param id         Represents the service ID to retrieve.
+   * @param customerId Represents the customer ID tied to the service.
+   * @return A specific customer service attached to the customer ID provided.
    */
-  public abstract CustomerService getCustomerServiceById(Long id, Long customerId);
+  CustomerService getCustomerServiceById(Long id, Long customerId);
 
   /**
-   * @param newCustomerService
-   * @param customerId
-   * @return
+   * Adds a new Customer Service object within the Customer Service table.
+   *
+   * @param newCustomerService Represents a new customer service object to be added.
+   * @param customerId         Represents the customer ID to attach the service to.
+   * @return Adds a new Customer Service object to the Customer Service table.
+   * @return The customer service that was added to the database.
    */
-  public abstract CustomerService addCustomerService(CustomerService newCustomerService,
+  CustomerService addCustomerService(CustomerService newCustomerService,
       Long customerId);
 
   /**
-   * @param serviceType
-   * @param customerId
-   * @return
+   * Deletes a Customer Service entry within the Customer Service table.
+   *
+   * @param serviceType Represents the service type of the service to be deleted.
+   * @param customerId  Represents the customer ID to delete the service from.
+   * @return An integer value noting how many records have been deleted.
    */
-  public abstract int deleteCustomerService(ServiceType serviceType, Long customerId);
+  int deleteCustomerService(ServiceType serviceType, Long customerId);
 
 }

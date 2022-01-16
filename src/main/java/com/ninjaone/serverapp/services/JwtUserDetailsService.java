@@ -20,8 +20,13 @@ public class JwtUserDetailsService implements UserDetailsService {
   private final PasswordEncoder bcryptEncoder;
 
   /**
-   * @param customerRepository
-   * @param bcryptEncoder
+   * Constructs the service used for loading and saving the user credentials for authentication
+   * purposes.
+   *
+   * @param customerRepository Represents the repository used for accessing the customer table
+   *                           loaded through dependency injection.
+   * @param bcryptEncoder      Represents the encryption encoder used for encrypting the customer
+   *                           user data loaded through dependency injection.
    */
   public JwtUserDetailsService(CustomerRepository customerRepository,
       PasswordEncoder bcryptEncoder) {
@@ -44,8 +49,11 @@ public class JwtUserDetailsService implements UserDetailsService {
   }
 
   /**
-   * @param customer
-   * @return
+   * Saves the customer information within the customer table while also encoding the customer's
+   * password.
+   *
+   * @param customer Represents the customer being saved within the database.
+   * @return A customer object saved.
    */
   public Customer save(Customer customer) {
     customer.setPassword(bcryptEncoder.encode(customer.getPassword()));
