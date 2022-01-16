@@ -4,7 +4,9 @@ import com.ninjaone.serverapp.models.CustomerDevice;
 import java.util.List;
 
 /**
- *
+ * Service used for retrieving required data from the Customer Device table. Allows retrieval of all
+ * customer devices, retrieval of devices by customer ID, device ID. Also allows adding, deleting,
+ * and updating of customer devices.
  */
 public interface CustomerDeviceAccessService {
 

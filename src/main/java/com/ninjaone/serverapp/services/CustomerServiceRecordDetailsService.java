@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
- *
+ * {@inheritDoc}
  */
 @Service
 public class CustomerServiceRecordDetailsService implements CustomerServiceAccessService {

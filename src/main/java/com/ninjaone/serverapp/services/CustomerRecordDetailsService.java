@@ -19,7 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 /**
- *
+ * {@inheritDoc}
  */
 @Service
 public class CustomerRecordDetailsService implements CustomerAccessService {

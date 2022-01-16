@@ -8,7 +8,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 /**
- *
+ * {@inheritDoc}
  */
 @Service
 public class ServiceCostRecordDetailsService implements ServiceCostAccessService {

@@ -11,7 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
- *
+ * {@inheritDoc}
  */
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
