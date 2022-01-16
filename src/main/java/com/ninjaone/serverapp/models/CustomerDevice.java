@@ -10,7 +10,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
- *
+ * Represents a customer device with a user defined ID, system name, and device type values.
+ * Includes a link to the customer.
  */
 @Entity
 @Table(name = "CUSTOMER_DEVICE")

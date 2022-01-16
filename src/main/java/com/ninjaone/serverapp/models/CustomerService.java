@@ -12,7 +12,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
- *
+ * Represents a customer service with an ID, service name, and service type values. Includes a link
+ * to the customer.
  */
 @Entity
 @Table(name = "CUSTOMER_SERVICE")

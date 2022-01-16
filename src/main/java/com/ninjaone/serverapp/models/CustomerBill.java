@@ -5,14 +5,15 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
- *
+ * Represents a Customer Bill including a machine device count and the total cost of supporting the
+ * devices and services selected.
  */
 public class CustomerBill implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private BigDecimal singleDeviceCost = new BigDecimal(4);
+    private final BigDecimal singleDeviceCost = new BigDecimal(4);
 
     private int windowsDeviceCount = 0;
     private int macDeviceCount = 0;

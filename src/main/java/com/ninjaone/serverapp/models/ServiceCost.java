@@ -11,7 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- *
+ * Represents the service cost object with a service name, service type, operating system, and
+ * value.
  */
 @Entity
 @Table(name = "SERVICE_COST")

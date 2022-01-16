@@ -14,7 +14,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
- *
+ * Represents the customer object with a first name, middle name, last name, username, and password.
+ * Includes links to both a list of customer devices and customer services.
  */
 @Entity
 @Table(name = "CUSTOMER")
