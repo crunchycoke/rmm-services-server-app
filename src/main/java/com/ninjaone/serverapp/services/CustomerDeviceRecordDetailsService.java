@@ -14,6 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+/**
+ * {@inheritDoc}
+ */
 @Service
 public class CustomerDeviceRecordDetailsService implements CustomerDeviceAccessService {
 
@@ -23,39 +26,67 @@ public class CustomerDeviceRecordDetailsService implements CustomerDeviceAccessS
   private final CustomerRepository customerRepository;
   private final CustomerDeviceRepository customerDeviceRepository;
 
+  /**
+   * Constructs the service used for accessing the records and details within the customer device
+   * table.
+   *
+   * @param customerRepository       Represents the repository used for accessing the customer table
+   *                                 loaded through dependency injection.
+   * @param customerDeviceRepository Represents the repository used for accessing the device table
+   *                                 loaded through dependency injection.
+   */
   public CustomerDeviceRecordDetailsService(CustomerRepository customerRepository,
       CustomerDeviceRepository customerDeviceRepository) {
     this.customerRepository = customerRepository;
     this.customerDeviceRepository = customerDeviceRepository;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public List<CustomerDevice> getCustomerDevices() {
     List<CustomerDevice> customerDevices = customerDeviceRepository.findAll();
 
+    log.info("Retrieved all available customer devices.");
+
     return customerDevices;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public List<CustomerDevice> getCustomerDevicesByCustomerId(Long customerId) {
     List<CustomerDevice> customerDevices =
         customerDeviceRepository.getCustomerDevicesByCustomerId(customerId);
 
     if (customerDevices.isEmpty()) {
+      log.info("No customer devices found under customer ID" + customerId + ".");
+
       throw new CustomerDeviceNotFoundException(customerId);
     }
 
     return customerDevices;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public CustomerDevice getCustomerDeviceById(Long id, Long customerId) {
     CustomerDevice customerDevice = customerDeviceRepository.getCustomerDeviceById(id, customerId)
         .orElseThrow(() -> new CustomerDeviceNotFoundException(id));
 
+    log.info("Retrieved customer device using device ID "
+        + id + " under customer " + customerId + ".");
+
     return customerDevice;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public CustomerDevice addCustomerDevice(CustomerDevice newCustomerDevice, Long customerId) {
     Optional<CustomerDevice> customerDevice = customerDeviceRepository.getCustomerDeviceById(
@@ -73,6 +104,8 @@ public class CustomerDeviceRecordDetailsService implements CustomerDeviceAccessS
               newCustomerDevice.getDeviceType().ordinal(),
               customerId);
     } catch (Exception ex) {
+      log.info("Unable to add customer device to table.", ex);
+
       throw new EntryCannotBeAddedException(newCustomerDevice, ex);
     }
 
@@ -86,6 +119,9 @@ public class CustomerDeviceRecordDetailsService implements CustomerDeviceAccessS
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public CustomerDevice updateCustomerDevice(Long id, CustomerDevice newCustomerDevice,
       Long customerId) {
@@ -112,15 +148,23 @@ public class CustomerDeviceRecordDetailsService implements CustomerDeviceAccessS
 
                 return customerDeviceRepository.save(newCustomerDevice);
               });
+
+      log.info("Returning updated customer device information.");
+
       return updatedCustomerDevice;
     } catch (Exception ex) {
       throw new EntryCannotBeAddedException(newCustomerDevice, ex);
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public int deleteCustomerDevice(Long id, Long customerId) {
     int deletedCustomerDevices = customerDeviceRepository.deleteByCustomerDeviceId(id, customerId);
+
+    log.info("Deleted " + deletedCustomerDevices + " devices.");
 
     return deletedCustomerDevices;
   }

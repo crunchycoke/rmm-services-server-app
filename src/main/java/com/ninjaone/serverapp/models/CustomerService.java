@@ -2,10 +2,19 @@ package com.ninjaone.serverapp.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ninjaone.serverapp.enums.ServiceType;
-
-import javax.persistence.*;
 import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
+/**
+ * Represents a customer service with an ID, service name, and service type values. Includes a link
+ * to the customer.
+ */
 @Entity
 @Table(name = "CUSTOMER_SERVICE")
 public class CustomerService {
@@ -74,26 +83,26 @@ public class CustomerService {
         }
 
         return Objects.equals(id, customerService.id)
-                && Objects.equals(serviceName, customerService.serviceName)
-                && Objects.equals(serviceType, customerService.serviceType)
-                && Objects.equals(customer, customerService.customer);
+            && Objects.equals(serviceName, customerService.serviceName)
+            && Objects.equals(serviceType, customerService.serviceType)
+            && Objects.equals(customer, customerService.customer);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id,
-                serviceName,
-                serviceType,
-                customer);
+            serviceName,
+            serviceType,
+            customer);
     }
 
     @Override
     public String toString() {
         return "CustomerService{" +
-                "id=" + id +
-                ", serviceName=" + serviceName +
-                ", serviceType=" + serviceType +
-                ", customer=" + customer +
-                '}';
+            "id=" + id +
+            ", serviceName=" + serviceName +
+            ", serviceType=" + serviceType +
+            ", customer=" + customer +
+            '}';
     }
 }

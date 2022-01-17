@@ -3,6 +3,9 @@ package com.ninjaone.serverapp.models;
 import java.io.Serial;
 import java.io.Serializable;
 
+/**
+ * Represents a JWT request with a provided username and password.
+ */
 public class JwtRequest implements Serializable {
 
   @Serial
@@ -11,7 +14,7 @@ public class JwtRequest implements Serializable {
   private String username;
   private String password;
 
-  //need default constructor for JSON Parsing
+  // Default JWT constructor used for parsing the JSON.
   public JwtRequest() {
 
   }

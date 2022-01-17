@@ -12,6 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+/**
+ * {@inheritDoc}
+ */
 @Service
 public class CustomerServiceRecordDetailsService implements CustomerServiceAccessService {
 
@@ -20,38 +23,63 @@ public class CustomerServiceRecordDetailsService implements CustomerServiceAcces
 
   private final CustomerServiceRepository customerServiceRepository;
 
+  /**
+   * Constructs the service used for accessing the records and details within the service table.
+   *
+   * @param customerServiceRepository Represents the repository used for accessing the service table
+   *                                  loaded through dependency injection.
+   */
   public CustomerServiceRecordDetailsService(CustomerServiceRepository customerServiceRepository) {
     this.customerServiceRepository = customerServiceRepository;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public List<CustomerService> getCustomerServices() {
     List<CustomerService> customerServices = customerServiceRepository.findAll();
 
+    log.info("Retrieved all available customer services.");
+
     return customerServices;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public List<CustomerService> getCustomerServicesByCustomerId(Long customerId) {
     List<CustomerService> customerServices =
         customerServiceRepository.getCustomerServicesByCustomerId(customerId);
 
     if (customerServices.isEmpty()) {
+      log.info("No customer services found under customer ID" + customerId + ".");
+
       throw new CustomerServiceNotFoundException(customerId);
     }
 
     return customerServices;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public CustomerService getCustomerServiceById(Long id, Long customerId) {
     CustomerService customerService = customerServiceRepository
         .getCustomerServiceById(id, customerId)
         .orElseThrow(() -> new CustomerServiceNotFoundException(id));
 
+    log.info("Retrieved customer service using service ID "
+        + id + " under customer " + customerId + ".");
+
     return customerService;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public CustomerService addCustomerService(CustomerService newCustomerService, Long customerId) {
     Optional<CustomerService> customerService =
@@ -69,6 +97,8 @@ public class CustomerServiceRecordDetailsService implements CustomerServiceAcces
               newCustomerService.getServiceType().ordinal(),
               customerId);
     } catch (Exception ex) {
+      log.info("Unable to add customer service to table.", ex);
+
       throw new EntryCannotBeAddedException(newCustomerService, ex);
     }
 
@@ -82,10 +112,15 @@ public class CustomerServiceRecordDetailsService implements CustomerServiceAcces
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public int deleteCustomerService(ServiceType serviceType, Long customerId) {
     int deletedCustomerServices = customerServiceRepository.deleteByCustomerServiceType(serviceType,
         customerId);
+
+    log.info("Deleted " + deletedCustomerServices + " services.");
 
     return deletedCustomerServices;
   }

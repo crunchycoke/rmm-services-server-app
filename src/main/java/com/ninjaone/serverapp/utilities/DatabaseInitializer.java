@@ -11,6 +11,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Initializes the database with values for the service cost.
+ */
 @Configuration
 public class DatabaseInitializer {
 
