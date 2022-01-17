@@ -1,5 +1,6 @@
 package com.ninjaone.serverapp.controllers;
 
+import com.ninjaone.serverapp.exceptions.InvalidCustomerProfileException;
 import com.ninjaone.serverapp.models.Customer;
 import com.ninjaone.serverapp.models.JwtRequest;
 import com.ninjaone.serverapp.models.JwtResponse;
@@ -77,6 +78,10 @@ public class JwtAuthenticationController {
   @PostMapping("/register")
   public ResponseEntity<?> saveCustomer(@RequestBody Customer customer) {
     log.info("Attempting to register customer " + customer);
+
+    if (customer.isInvalidCustomerProfile()) {
+      throw new InvalidCustomerProfileException();
+    }
 
     return ResponseEntity.ok(userDetailsService.save(customer));
   }
